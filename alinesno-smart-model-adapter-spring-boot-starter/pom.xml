@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>com.agentsflex</groupId>
+        <artifactId>parent</artifactId>
+        <version>${revision}</version>
+    </parent>
+
+    <name>alinesno-smart-model-adapter-spring-boot-starter</name>
+    <artifactId>alinesno-smart-model-adapter-spring-boot-starter</artifactId>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-dependencies</artifactId>
+                <version>${spring-boot.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-autoconfigure</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-autoconfigure-processor</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-configuration-processor</artifactId>
+            <optional>true</optional>
+        </dependency>
+
+        <dependency>
+            <groupId>com.agentsflex</groupId>
+            <artifactId>alinesno-smart-model-adapter-core</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-simple</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <!--llm start-->
+        <dependency>
+            <groupId>com.agentsflex</groupId>
+            <artifactId>alinesno-smart-model-adapter-llm-chatglm</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>com.agentsflex</groupId>
+            <artifactId>alinesno-smart-model-adapter-llm-ollama</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>com.agentsflex</groupId>
+            <artifactId>alinesno-smart-model-adapter-llm-openai</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>com.agentsflex</groupId>
+            <artifactId>alinesno-smart-model-adapter-llm-deepseek</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>com.agentsflex</groupId>
+            <artifactId>alinesno-smart-model-adapter-llm-qwen</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>com.agentsflex</groupId>
+            <artifactId>alinesno-smart-model-adapter-llm-spark</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>com.agentsflex</groupId>
+            <artifactId>alinesno-smart-model-adapter-llm-moonshot</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <!--llm end-->
+
+        <!--store start-->
+        <dependency>
+            <groupId>com.agentsflex</groupId>
+            <artifactId>alinesno-smart-model-adapter-store-aliyun</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>com.agentsflex</groupId>
+            <artifactId>alinesno-smart-model-adapter-store-qcloud</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>com.agentsflex</groupId>
+            <artifactId>alinesno-smart-model-adapter-store-elasticsearch</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>com.agentsflex</groupId>
+            <artifactId>alinesno-smart-model-adapter-store-opensearch</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <!--store end-->
+    </dependencies>
+
+</project>
