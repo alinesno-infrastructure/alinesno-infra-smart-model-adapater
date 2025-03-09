@@ -1,5 +1,6 @@
-<h4 align="right"><strong>English</strong> | <a href="./readme_zh.md">简体中文</a> | <a href="./readme_ja.md">日本語</a></h4>
+此框架基于[AgentFlex](https://github.com/agents-flex/agents-flex)二次开发
 
+ 
 <p align="center">
     <img src="./docs/assets/images/banner.png"/>
 </p>
