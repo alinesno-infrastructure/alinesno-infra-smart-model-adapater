@@ -23,6 +23,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class GiteeImageModel implements ImageModel {
+
     private GiteeImageModelConfig config;
     private HttpClient httpClient = new HttpClient();
 
@@ -62,6 +63,11 @@ public class GiteeImageModel implements ImageModel {
     @Override
     public ImageResponse vary(VaryImageRequest request) {
         throw new IllegalStateException("GiteeImageModel Can not support vary image.");
+    }
+
+    @Override
+    public ImageResponse understand(UnderstandImageRequest request) {
+        return null;
     }
 
 }
