@@ -15,10 +15,16 @@
  */
 package com.agentsflex.core.image;
 
+import lombok.Data;
+import lombok.Getter;
+
 import java.util.HashMap;
 import java.util.Map;
 
+@Getter
+@Data
 public class BaseImageRequest {
+
     private String model;
     private Integer n;
     private String responseFormat;
@@ -27,40 +33,20 @@ public class BaseImageRequest {
     private Integer height;
     private Map<String, Object> options;
 
-    public String getModel() {
-        return model;
-    }
-
     public void setModel(String model) {
         this.model = model;
-    }
-
-    public Integer getN() {
-        return n;
     }
 
     public void setN(Integer n) {
         this.n = n;
     }
 
-    public String getResponseFormat() {
-        return responseFormat;
-    }
-
     public void setResponseFormat(String responseFormat) {
         this.responseFormat = responseFormat;
     }
 
-    public Integer getWidth() {
-        return width;
-    }
-
     public void setWidth(Integer width) {
         this.width = width;
-    }
-
-    public Integer getHeight() {
-        return height;
     }
 
     public void setHeight(Integer height) {
@@ -80,16 +66,8 @@ public class BaseImageRequest {
     }
 
 
-    public String getUser() {
-        return user;
-    }
-
     public void setUser(String user) {
         this.user = user;
-    }
-
-    public Map<String, Object> getOptions() {
-        return options;
     }
 
     public void setOptions(Map<String, Object> options) {
