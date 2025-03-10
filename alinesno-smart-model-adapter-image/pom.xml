@@ -17,6 +17,8 @@
         <module>alinesno-smart-model-adapter-image-stability</module>
         <module>alinesno-smart-model-adapter-image-gitee</module>
         <module>alinesno-smart-model-adapter-image-siliconflow</module>
+        <module>alinesno-smart-model-adapter-image-qwen</module>
+        <module>alinesno-smart-model-adapter-image-doubao</module>
     </modules>
 
 </project>
