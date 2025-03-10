@@ -16,15 +16,18 @@
 package com.agentsflex.core.image;
 
 import com.agentsflex.core.util.Metadata;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@EqualsAndHashCode(callSuper = true)
+@Data
 public class ImageResponse extends Metadata {
     private List<Image> images;
     private boolean error;
     private String errorMessage;
-
 
     public static ImageResponse error(String errMessage) {
         ImageResponse imageResponse = new ImageResponse();
@@ -32,15 +35,6 @@ public class ImageResponse extends Metadata {
         imageResponse.setErrorMessage(errMessage);
         return imageResponse;
     }
-
-    public List<Image> getImages() {
-        return images;
-    }
-
-    public void setImages(List<Image> images) {
-        this.images = images;
-    }
-
 
     public void addImage(String url) {
         if (this.images == null) {
@@ -56,22 +50,6 @@ public class ImageResponse extends Metadata {
         }
 
         this.images.add(Image.ofBytes(bytes));
-    }
-
-    public boolean isError() {
-        return error;
-    }
-
-    public void setError(boolean error) {
-        this.error = error;
-    }
-
-    public String getErrorMessage() {
-        return errorMessage;
-    }
-
-    public void setErrorMessage(String errorMessage) {
-        this.errorMessage = errorMessage;
     }
 
     @Override
