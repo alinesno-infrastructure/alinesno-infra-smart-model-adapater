@@ -15,42 +15,26 @@
  */
 package com.agentsflex.core.image;
 
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+
+/**
+ * 继承自 BaseImageRequest 类
+ */
+@EqualsAndHashCode(callSuper = true)
+@Data
 public class GenerateImageRequest extends BaseImageRequest {
+
+    // 用于描述生成图像的正向提示词
     private String prompt;
+
+    // 用于描述不希望在生成图像中出现的元素的负向提示词
     private String negativePrompt;
+
+    // 图像生成的质量级别
     private String quality;
+
+    // 图像生成的风格
     private String style;
 
-    public String getPrompt() {
-        return prompt;
-    }
-
-    public void setPrompt(String prompt) {
-        this.prompt = prompt;
-    }
-
-    public String getNegativePrompt() {
-        return negativePrompt;
-    }
-
-    public void setNegativePrompt(String negativePrompt) {
-        this.negativePrompt = negativePrompt;
-    }
-
-    public String getQuality() {
-        return quality;
-    }
-
-    public void setQuality(String quality) {
-        this.quality = quality;
-    }
-
-    public String getStyle() {
-        return style;
-    }
-
-    public void setStyle(String style) {
-        this.style = style;
-    }
 }
-
