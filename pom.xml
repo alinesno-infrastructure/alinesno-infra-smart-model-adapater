@@ -4,6 +4,13 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
+<!--    <parent>-->
+<!--        <groupId>com.alinesno.infra.common</groupId>-->
+<!--        <artifactId>alinesno-infra-platform-parent</artifactId>-->
+<!--        <version>1.1.0-SNAPSHOT</version>-->
+<!--        <relativePath/>-->
+<!--    </parent>-->
+
     <groupId>com.agentsflex</groupId>
     <artifactId>parent</artifactId>
     <version>${revision}</version>
@@ -42,12 +49,9 @@
     <modules>
         <module>alinesno-smart-model-adapter-bom</module>
         <module>alinesno-smart-model-adapter-core</module>
-        <module>alinesno-smart-model-adapter-test</module>
-        <module>alinesno-smart-model-adapter-samples</module>
         <module>alinesno-smart-model-adapter-llm</module>
         <module>alinesno-smart-model-adapter-store</module>
         <module>alinesno-smart-model-adapter-document-parser</module>
-        <module>alinesno-smart-model-adapter-solon-plugin</module>
         <module>alinesno-smart-model-adapter-spring-boot-starter</module>
         <module>alinesno-smart-model-adapter-chain</module>
         <module>alinesno-smart-model-adapter-image</module>
