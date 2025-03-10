@@ -84,4 +84,9 @@ public class SiliconImageModel implements ImageModel {
         throw new IllegalStateException("SiliconImageModel Can not support vary image.");
     }
 
+    @Override
+    public ImageResponse understand(UnderstandImageRequest request) {
+        return null;
+    }
+
 }
