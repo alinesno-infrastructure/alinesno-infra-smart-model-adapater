@@ -80,4 +80,9 @@ public class OpenAiImageModel implements ImageModel {
         throw new UnsupportedOperationException("not support vary image");
     }
 
+    @Override
+    public ImageResponse understand(UnderstandImageRequest request) {
+        return null;
+    }
+
 }
