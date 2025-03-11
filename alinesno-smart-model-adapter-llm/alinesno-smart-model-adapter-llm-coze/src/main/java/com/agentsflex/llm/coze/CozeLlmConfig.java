@@ -16,16 +16,21 @@
 package com.agentsflex.llm.coze;
 
 import com.agentsflex.core.llm.LlmConfig;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 /**
  * @author yulsh
+ * @author luoxiaodong
  */
+@EqualsAndHashCode(callSuper = true)
+@Data
 public class CozeLlmConfig extends LlmConfig {
 
     private final String DEFAULT_CHAT_API = "/v3/chat";
     private final String DEFAULT_ENDPOINT = "https://api.coze.cn";
-    private String chatApi;
 
+    private String chatApi;
 
     private String defaultBotId;
 
@@ -40,43 +45,4 @@ public class CozeLlmConfig extends LlmConfig {
         this.setEndpoint(DEFAULT_ENDPOINT);
     }
 
-    public void setChatApi(String chatApi) {
-        this.chatApi = chatApi;
-    }
-
-    public String getChatApi() {
-        return chatApi;
-    }
-
-    public String getDefaultBotId() {
-        return defaultBotId;
-    }
-
-    public void setDefaultBotId(String defaultBotId) {
-        this.defaultBotId = defaultBotId;
-    }
-
-    public String getDefaultConversationId() {
-        return defaultConversationId;
-    }
-
-    public void setDefaultConversationId(String defaultConversationId) {
-        this.defaultConversationId = defaultConversationId;
-    }
-
-    public String getDefaultUserId() {
-        return defaultUserId;
-    }
-
-    public void setDefaultUserId(String defaultUserId) {
-        this.defaultUserId = defaultUserId;
-    }
-
-    public boolean isStream() {
-        return stream;
-    }
-
-    public void setStream(boolean stream) {
-        this.stream = stream;
-    }
 }
