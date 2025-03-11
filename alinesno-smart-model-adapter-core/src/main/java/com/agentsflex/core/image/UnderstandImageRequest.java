@@ -9,6 +9,6 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(callSuper = true)
 @Data
 public class UnderstandImageRequest extends BaseImageRequest{
-    private String text;
+    private String text = "请描述这张图片，并使用中文回复.";
     private String imageUrl;
 }
