@@ -1,8 +1,6 @@
 package com.agentflex.image.qwen.test;
 
-import com.agentsflex.core.image.GenerateImageRequest;
-import com.agentsflex.core.image.Image;
-import com.agentsflex.core.image.ImageResponse;
+import com.agentsflex.core.image.*;
 import com.agentsflex.image.qwen.QwenImageModel;
 import com.agentsflex.image.qwen.QwenImageModelConfig;
 import org.junit.Test;
@@ -35,6 +33,21 @@ public class QwenImageModelTest {
         }
 
         System.out.println(generate);
+    }
+
+    @Test
+    public void testUnderstand(){
+        QwenImageModelConfig config = new QwenImageModelConfig();
+        config.setApiKey(System.getenv("ALINESNO_QIWEN_API_KEY")) ;
+        config.setModel("qwen-vl-plus");
+
+        QwenImageModel openAiImageModel = new QwenImageModel(config);
+
+        UnderstandImageRequest request = new UnderstandImageRequest();
+        request.setImageUrl("http://data.linesno.com/demo.png") ;
+
+        UnderstandImageResponse understand = openAiImageModel.understand(request);
+        System.out.println(understand.getResponse());
     }
 
 }
