@@ -14,71 +14,37 @@
  *  limitations under the License.
  */
 
+/**
+ * LlmConfig 类用于配置与大型语言模型（LLM）交互所需的参数
+ * 实现了 Serializable 接口，以支持对象的序列化和反序列化，便于网络传输或存储
+ */
 package com.agentsflex.core.llm;
+
+import lombok.Data;
 
 import java.io.Serializable;
 import java.util.Map;
 import java.util.function.Consumer;
 
+@Data
 public class LlmConfig implements Serializable {
 
+    // 模型名称，用于指定与之交互的具体语言模型
     private String model;
 
+    // 服务端点，即发送请求的URL地址
     private String endpoint;
 
+    // API密钥，用于身份验证
     private String apiKey;
 
+    // API密钥的秘密部分，与apiKey一起用于身份验证
     private String apiSecret;
 
+    // 调试模式，开启后可能会输出更多的调试信息
     private boolean debug;
 
+    // 自定义请求头配置的消费者函数，用于在发送请求前动态修改请求头
     private Consumer<Map<String, String>> headersConfig;
 
-    public boolean isDebug() {
-        return debug;
-    }
-
-    public void setDebug(boolean debug) {
-        this.debug = debug;
-    }
-
-    public String getModel() {
-        return model;
-    }
-
-    public void setModel(String model) {
-        this.model = model;
-    }
-
-    public String getEndpoint() {
-        return endpoint;
-    }
-
-    public void setEndpoint(String endpoint) {
-        this.endpoint = endpoint;
-    }
-
-    public String getApiKey() {
-        return apiKey;
-    }
-
-    public void setApiKey(String apiKey) {
-        this.apiKey = apiKey;
-    }
-
-    public String getApiSecret() {
-        return apiSecret;
-    }
-
-    public void setApiSecret(String apiSecret) {
-        this.apiSecret = apiSecret;
-    }
-
-    public Consumer<Map<String, String>> getHeadersConfig() {
-        return headersConfig;
-    }
-
-    public void setHeadersConfig(Consumer<Map<String, String>> headersConfig) {
-        this.headersConfig = headersConfig;
-    }
 }
