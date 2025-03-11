@@ -15,9 +15,7 @@
  */
 package com.agentsflex.image.test;
 
-import com.agentsflex.core.image.GenerateImageRequest;
-import com.agentsflex.core.image.Image;
-import com.agentsflex.core.image.ImageResponse;
+import com.agentsflex.core.image.*;
 import com.agentsflex.image.gitee.GiteeImageModel;
 import com.agentsflex.image.gitee.GiteeImageModelConfig;
 import org.junit.Test;
@@ -45,6 +43,21 @@ public class GiteeImageModelTest {
         }
 
         System.out.println(generate);
+    }
+
+    @Test
+    public void testUnderstand(){
+        GiteeImageModelConfig config = new GiteeImageModelConfig();
+        config.setApiKey(System.getenv("ALINESNO_GITEE_API_KEY")) ;
+        config.setModel("Qwen2-VL-72B");
+
+        GiteeImageModel openAiImageModel = new GiteeImageModel(config);
+
+        UnderstandImageRequest request = new UnderstandImageRequest();
+        request.setImageUrl("http://data.linesno.com/demo.png") ;
+
+        UnderstandImageResponse understand = openAiImageModel.understand(request);
+        System.out.println(understand.getResponse());
     }
 
 }
