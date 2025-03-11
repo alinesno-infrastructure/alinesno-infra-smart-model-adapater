@@ -2,14 +2,17 @@ package com.agentsflex.image.qwen;
 
 import com.agentsflex.core.image.*;
 import com.agentsflex.core.llm.client.HttpClient;
-import com.agentsflex.image.qwen.bean.*;
+import com.agentsflex.image.qwen.bean.InitialResponse;
+import com.agentsflex.image.qwen.bean.TaskResultResponse;
 import com.alibaba.fastjson2.JSON;
+import com.alibaba.fastjson2.JSONObject;
 import lombok.extern.slf4j.Slf4j;
-import okhttp3.*;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -135,68 +138,41 @@ public class QwenImageModel implements ImageModel {
     }
 
     @Override
-    public ImageResponse understand(UnderstandImageRequest request) {
-        try {
-            // 构建JSON结构
-            Map<String, Object> requestBody = getStringObjectMap(request);
+    public UnderstandImageResponse understand(UnderstandImageRequest request) {
+        Map<String, String> headers = new HashMap<>();
+        headers.put("Content-Type", "application/json");
+        headers.put("Authorization", "Bearer " + config.getApiKey());
 
-            // 转换为JSON字符串
-            String json = JSON.toJSONString(requestBody);
+        Map<String, Object> messagesContent = new HashMap<>();
+        messagesContent.put("role", "user");
+        messagesContent.put("content", List.of(
+            Map.of("type", "text", "text", request.getText()),
+            Map.of("type", "image_url", "image_url", Map.of("url", request.getImageUrl()))
+        ));
 
-            // 构建HTTP请求
-            RequestBody body = RequestBody.create(
-                MediaType.get("application/json; charset=utf-8"),
-                json
-            );
+        Map<String, Object> payloadMap = new HashMap<>();
+        payloadMap.put("model", config.getModel());
+        payloadMap.put("stream", false) ;
+        payloadMap.put("messages", List.of(messagesContent));
 
-            Request requestHttp = new Request.Builder()
-                .url(config.getEndpoint())
-                .post(body)
-                .addHeader("Authorization", "Bearer " + config.getApiKey())
-                .build();
+        String payload = convertToJson(payloadMap);
+        String url = config.getUnderstandEndpoint();
 
-            try (Response response = okHttpClient.newCall(requestHttp).execute()) {
-                if (response.isSuccessful()) {
-                    ImageResponse imageResponse = new ImageResponse();
-                    // 处理响应数据
-                    return imageResponse;
-                }
-            }
-        } catch (IOException e) {
-            log.error("请求处理失败: {}", e.getMessage());
+        String responseStr = httpClient.post(url, headers, payload);
+        // 解析 responseStr 中的 content 字段
+        JSONObject jsonObject = JSON.parseObject(responseStr);
+        List<JSONObject> choices = jsonObject.getJSONArray("choices").toList(JSONObject.class);
+        if (!choices.isEmpty()) {
+            JSONObject firstChoice = choices.get(0);
+            JSONObject message = firstChoice.getJSONObject("message");
+            String content = message.getString("content");
+
+            UnderstandImageResponse understandResponse = new UnderstandImageResponse();
+            understandResponse.setResponse(content);
+            return understandResponse;
+        } else {
+            return UnderstandImageResponse.error("No choices found in the response.");
         }
-        return null;
-    }
-
-    @NotNull
-    private static Map<String, Object> getStringObjectMap(UnderstandImageRequest request) {
-        Map<String, Object> requestBody = new HashMap<>();
-        requestBody.put("model", "qwen-vl-plus");
-
-        List<Map<String, Object>> messages = new ArrayList<>();
-        Map<String, Object> message = new HashMap<>();
-        message.put("role", "user");
-
-        List<Map<String, Object>> contentList = new ArrayList<>();
-        // 添加文本内容
-        Map<String, Object> textContent = new HashMap<>();
-        textContent.put("type", "text");
-        textContent.put("text", request.getText());
-        contentList.add(textContent);
-
-        // 添加图片URL内容
-        Map<String, Object> imageContent = new HashMap<>();
-        imageContent.put("type", "image_url");
-        Map<String, String> imageUrl = new HashMap<>();
-        imageUrl.put("url", request.getImageUrl());
-        imageContent.put("image_url", imageUrl);
-        contentList.add(imageContent);
-
-        message.put("content", contentList);
-        messages.add(message);
-        requestBody.put("messages", messages);
-
-        return requestBody;
     }
 
 }
