@@ -23,6 +23,7 @@
         <module>alinesno-smart-model-adapter-llm-coze</module>
         <module>alinesno-smart-model-adapter-llm-gitee</module>
         <module>alinesno-smart-model-adapter-llm-deepseek</module>
+        <module>alinesno-smart-model-adapter-llm-doubao</module>
     </modules>
 
 </project>
