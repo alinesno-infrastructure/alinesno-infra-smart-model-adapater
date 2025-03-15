@@ -81,7 +81,7 @@ public class OpenAiImageModel implements ImageModel {
     }
 
     @Override
-    public ImageResponse understand(UnderstandImageRequest request) {
+    public UnderstandImageResponse understand(UnderstandImageRequest request) {
         return null;
     }
 
