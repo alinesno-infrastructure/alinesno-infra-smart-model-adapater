@@ -82,11 +82,13 @@ public class DefaultAiMessageParser implements AiMessageParser {
         AiMessage aiMessage = new AiMessage();
 
         if (StringUtil.hasText(this.contentPath)) {
-            aiMessage.setContent((String) JSONPath.eval(rootJson, this.contentPath));
+            Object content = JSONPath.eval(rootJson, this.contentPath) ;
+            aiMessage.setContent(content == null ? "": content.toString());
         }
 
         if (StringUtil.hasText(this.reasoningContentPath)) {
-            aiMessage.setReasoningContent((String) JSONPath.eval(rootJson, this.reasoningContentPath));
+            Object reasoningContent = JSONPath.eval(rootJson, this.reasoningContentPath) ;
+            aiMessage.setReasoningContent(reasoningContent == null? "" : reasoningContent.toString()) ;
         }
 
         if (StringUtil.hasText(this.indexPath)) {
