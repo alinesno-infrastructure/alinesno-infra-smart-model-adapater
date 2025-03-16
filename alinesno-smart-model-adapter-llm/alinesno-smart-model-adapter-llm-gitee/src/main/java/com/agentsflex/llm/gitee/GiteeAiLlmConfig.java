@@ -17,11 +17,16 @@ package com.agentsflex.llm.gitee;
 
 import com.agentsflex.core.llm.LlmConfig;
 
+/**
+ * GiteeAiLlmConfig
+ *
+ * @author luoxiaodong
+ */
 public class GiteeAiLlmConfig extends LlmConfig {
 
     private static final String DEFAULT_MODEL = "Qwen2-7B-Instruct";
     private static final String DEFAULT_EMBEDDING_MODEL = "bge-large-zh-v1.5";
-    private static final String DEFAULT_ENDPOINT = "https://ai.gitee.com";
+    private static final String DEFAULT_ENDPOINT = "https://ai.gitee.com/v1";
 
     private String defaultEmbeddingModal = DEFAULT_EMBEDDING_MODEL;
 
