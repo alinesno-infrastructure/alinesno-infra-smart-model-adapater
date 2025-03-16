@@ -68,9 +68,11 @@ public class BaseLlmClientListener implements LlmClientListener {
 
             lastAiMessage = messageParser.parse(jsonObject);
 
+            // 推理内容
             fullMessage.append(lastAiMessage.getContent());
             fullReasoningMessage.append(lastAiMessage.getReasoningContent());
 
+            // 聊天内容
             lastAiMessage.setFullContent(fullMessage.toString());
             lastAiMessage.setFullReasoningContent(fullReasoningMessage.toString());
 
