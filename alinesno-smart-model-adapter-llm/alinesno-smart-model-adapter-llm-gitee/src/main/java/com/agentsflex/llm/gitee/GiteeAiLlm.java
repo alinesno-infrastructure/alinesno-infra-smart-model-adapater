@@ -54,6 +54,8 @@ public class GiteeAiLlm extends BaseLlm<GiteeAiLlmConfig> {
         Map<String, String> headers = new HashMap<>();
         headers.put("Content-Type", "application/json");
         headers.put("Authorization", "Bearer " + getConfig().getApiKey());
+        headers.put("X-Failover-Enabled", "true");
+        headers.put("X-Package", "1910");
 
         Consumer<Map<String, String>> headersConfig = config.getHeadersConfig();
         if (headersConfig != null) {
@@ -66,7 +68,8 @@ public class GiteeAiLlm extends BaseLlm<GiteeAiLlmConfig> {
         }
 
         String endpoint = config.getEndpoint();
-        String response = httpClient.post(endpoint + "/api/serverless/" + config.getModel() + "/chat/completions", headers, payload);
+//        String response = httpClient.post(endpoint + "/api/serverless/" + config.getModel() + "/chat/completions", headers, payload);
+        String response = httpClient.post(endpoint + "/chat/completions", headers, payload);
         if (config.isDebug()) {
             System.out.println(">>>>receive payload:" + response);
         }
@@ -101,7 +104,8 @@ public class GiteeAiLlm extends BaseLlm<GiteeAiLlmConfig> {
         String payload = GiteeAiLLmUtil.promptToPayload(prompt, config, options, true);
         String endpoint = config.getEndpoint();
         LlmClientListener clientListener = new BaseLlmClientListener(this, llmClient, listener, prompt, streamMessageParser);
-        llmClient.start(endpoint + "/api/serverless/" + config.getModel() + "/chat/completions", headers, payload, clientListener, config);
+//        llmClient.start(endpoint + "/api/serverless/" + config.getModel() + "/chat/completions", headers, payload, clientListener, config);
+        llmClient.start(endpoint + "/chat/completions", headers, payload, clientListener, config);
     }
 
 
