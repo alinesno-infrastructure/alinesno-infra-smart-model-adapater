@@ -41,6 +41,7 @@ public class GiteeAiLLmUtil {
         HumanMessage humanMessage = (HumanMessage) CollectionUtil.lastItem(messages);
         return Maps.of()
             .set("messages", promptFormat.toMessagesJsonObject(messages))
+            .set("model", config.getModel())
             .setIf(withStream, "stream", withStream)
             .setIfNotNull("max_tokens", options.getMaxTokens())
             .setIfNotNull("temperature", options.getTemperature())
