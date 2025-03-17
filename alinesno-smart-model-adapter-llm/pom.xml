@@ -25,6 +25,7 @@
         <module>alinesno-smart-model-adapter-llm-deepseek</module>  <!-- deepseek推理框架 -->
         <module>alinesno-smart-model-adapter-llm-qwq</module>  <!-- 阿里qwq推理框架 -->
         <module>alinesno-smart-model-adapter-llm-doubao</module>
+        <module>alinesno-smart-model-adapter-llm-siliconflow</module>  <!-- 硅基流动 -->
     </modules>
 
 </project>
