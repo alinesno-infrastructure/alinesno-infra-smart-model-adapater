@@ -140,8 +140,4 @@ public class DoubaoImageModel implements ImageModel {
         return ImageResponse.error("DoubaoImageModel does not support vary image.");
     }
 
-    @Override
-    public UnderstandImageResponse understand(UnderstandImageRequest request) {
-        return null;
-    }
 }
