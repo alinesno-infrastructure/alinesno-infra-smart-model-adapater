@@ -23,6 +23,4 @@ public interface ImageModel {
 
     ImageResponse vary(VaryImageRequest request);
 
-    UnderstandImageResponse understand(UnderstandImageRequest request) ;
-
 }
