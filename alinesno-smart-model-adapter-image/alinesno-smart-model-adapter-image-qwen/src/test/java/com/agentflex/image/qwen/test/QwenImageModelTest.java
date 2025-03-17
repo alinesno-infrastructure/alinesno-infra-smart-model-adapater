@@ -35,19 +35,19 @@ public class QwenImageModelTest {
         System.out.println(generate);
     }
 
-    @Test
-    public void testUnderstand(){
-        QwenImageModelConfig config = new QwenImageModelConfig();
-        config.setApiKey(System.getenv("ALINESNO_QIWEN_API_KEY")) ;
-        config.setModel("qwen-vl-plus");
-
-        QwenImageModel openAiImageModel = new QwenImageModel(config);
-
-        UnderstandImageRequest request = new UnderstandImageRequest();
-        request.setImageUrl("http://data.linesno.com/demo.png") ;
-
-        UnderstandImageResponse understand = openAiImageModel.understand(request);
-        System.out.println(understand.getResponse());
-    }
+//    @Test
+//    public void testUnderstand(){
+//        QwenImageModelConfig config = new QwenImageModelConfig();
+//        config.setApiKey(System.getenv("ALINESNO_QIWEN_API_KEY")) ;
+//        config.setModel("qwen-vl-plus");
+//
+//        QwenImageModel openAiImageModel = new QwenImageModel(config);
+//
+//        UnderstandImageRequest request = new UnderstandImageRequest();
+//        request.setImageUrl("http://data.linesno.com/demo.png") ;
+//
+//        UnderstandImageResponse understand = openAiImageModel.understand(request);
+//        System.out.println(understand.getResponse());
+//    }
 
 }
