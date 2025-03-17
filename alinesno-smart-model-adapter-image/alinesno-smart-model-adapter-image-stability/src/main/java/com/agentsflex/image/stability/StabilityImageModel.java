@@ -70,9 +70,4 @@ public class StabilityImageModel implements ImageModel {
     public ImageResponse vary(VaryImageRequest request) {
         return null;
     }
-
-    @Override
-    public UnderstandImageResponse understand(UnderstandImageRequest request) {
-        return null;
-    }
 }
