@@ -27,8 +27,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class SiliconImageModel implements ImageModel {
-    private SiliconflowImageModelConfig config;
-    private HttpClient httpClient = new HttpClient();
+
+    private final SiliconflowImageModelConfig config;
+    private final HttpClient httpClient = new HttpClient();
 
     public SiliconImageModel(SiliconflowImageModelConfig config) {
         this.config = config;
@@ -82,11 +83,6 @@ public class SiliconImageModel implements ImageModel {
     @Override
     public ImageResponse vary(VaryImageRequest request) {
         throw new IllegalStateException("SiliconImageModel Can not support vary image.");
-    }
-
-    @Override
-    public UnderstandImageResponse understand(UnderstandImageRequest request) {
-        return null;
     }
 
 }
