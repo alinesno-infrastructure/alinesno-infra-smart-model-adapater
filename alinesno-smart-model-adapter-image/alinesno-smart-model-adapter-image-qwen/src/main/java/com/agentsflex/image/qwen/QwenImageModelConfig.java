@@ -1,14 +1,22 @@
 package com.agentsflex.image.qwen;
 
+import com.agentsflex.core.image.ImageConfig;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
-import java.io.Serializable;
-
+@EqualsAndHashCode(callSuper = true)
 @Data
-public class QwenImageModelConfig implements Serializable {
-    private String endpoint = "https://dashscope.aliyuncs.com/api/v1/services/aigc/text2image/image-synthesis";
-    private String understandEndpoint = "https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions" ;
+public class QwenImageModelConfig extends ImageConfig {
+
     private String taskEndpoint = "https://dashscope.aliyuncs.com/api/v1/tasks/";
-    private String model = QwenImageModels.wanx2_0_t2i_turbo;
-    private String apiKey;
+
+    public QwenImageModelConfig() {
+
+        String endpoint = "https://dashscope.aliyuncs.com/api/v1/services/aigc/text2image/image-synthesis";
+        String model = QwenImageModels.wanx2_0_t2i_turbo;
+
+        setEndpoint(endpoint);
+        setModel(model);
+
+    }
 }
