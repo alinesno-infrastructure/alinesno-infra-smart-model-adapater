@@ -1,13 +1,18 @@
 package com.agentsflex.image.doubao;
 
+import com.agentsflex.core.image.ImageConfig;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
-import java.io.Serializable;
-
+@EqualsAndHashCode(callSuper = true)
 @Data
-public class DoubaoImageModelConfig implements Serializable {
-    private String endpoint = "https://visual.volcengineapi.com";
-    private String model = DoubaoImageModels.general_v2_1_L;
-    private String accessKey ;
-    private String secretKey ;
+public class DoubaoImageModelConfig extends ImageConfig {
+
+    public DoubaoImageModelConfig() {
+        String endpoint = "https://visual.volcengineapi.com";
+        String model = DoubaoImageModels.general_v2_1_L;
+
+        setEndpoint(endpoint);
+        setModel(model);
+    }
 }
