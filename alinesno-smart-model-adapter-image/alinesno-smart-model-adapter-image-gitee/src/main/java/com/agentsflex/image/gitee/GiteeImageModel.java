@@ -18,17 +18,14 @@ package com.agentsflex.image.gitee;
 import com.agentsflex.core.image.*;
 import com.agentsflex.core.llm.client.HttpClient;
 import com.agentsflex.core.util.Maps;
-import com.alibaba.fastjson2.JSON;
-import com.alibaba.fastjson2.JSONObject;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class GiteeImageModel implements ImageModel {
 
-    private GiteeImageModelConfig config;
-    private HttpClient httpClient = new HttpClient();
+    private final GiteeImageModelConfig config;
+    private final HttpClient httpClient = new HttpClient();
 
     public GiteeImageModel(GiteeImageModelConfig config) {
         this.config = config;
@@ -66,44 +63,6 @@ public class GiteeImageModel implements ImageModel {
     @Override
     public ImageResponse vary(VaryImageRequest request) {
         throw new IllegalStateException("GiteeImageModel Can not support vary image.");
-    }
-
-    @Override
-    public UnderstandImageResponse understand(UnderstandImageRequest request) {
-        Map<String, String> headers = new HashMap<>();
-        headers.put("Content-Type", "application/json");
-        headers.put("Authorization", "Bearer " + config.getApiKey());
-
-        Map<String, Object> messagesContent = new HashMap<>();
-        messagesContent.put("role", "user");
-        messagesContent.put("content", List.of(
-            Map.of("type", "text", "text", request.getText()),
-            Map.of("type", "image_url", "image_url", Map.of("url", request.getImageUrl()))
-        ));
-
-        Map<String, Object> payloadMap = new HashMap<>();
-        payloadMap.put("model", config.getModel());
-        payloadMap.put("stream", false) ;
-        payloadMap.put("messages", List.of(messagesContent));
-
-        String payload = JSON.toJSONString(payloadMap);
-        String url = config.getUnderstandEndpoint();
-
-        String responseStr = httpClient.post(url, headers, payload);
-        // 解析 responseStr 中的 content 字段
-        JSONObject jsonObject = JSON.parseObject(responseStr);
-        List<JSONObject> choices = jsonObject.getJSONArray("choices").toList(JSONObject.class);
-        if (!choices.isEmpty()) {
-            JSONObject firstChoice = choices.get(0);
-            JSONObject message = firstChoice.getJSONObject("message");
-            String content = message.getString("content");
-
-            UnderstandImageResponse understandResponse = new UnderstandImageResponse();
-            understandResponse.setResponse(content);
-            return understandResponse;
-        } else {
-            return UnderstandImageResponse.error("No choices found in the response.");
-        }
     }
 
 }
