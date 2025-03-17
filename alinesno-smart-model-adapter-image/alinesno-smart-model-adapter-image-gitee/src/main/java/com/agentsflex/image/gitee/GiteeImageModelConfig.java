@@ -15,14 +15,21 @@
  */
 package com.agentsflex.image.gitee;
 
+import com.agentsflex.core.image.ImageConfig;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
-import java.io.Serializable;
-
+@EqualsAndHashCode(callSuper = true)
 @Data
-public class GiteeImageModelConfig implements Serializable {
-    private String endpoint = "https://ai.gitee.com";
-    private String understandEndpoint = "https://ai.gitee.com/v1/chat/completions" ;
-    private String model = GiteeImageModels.flux_1_schnell;
-    private String apiKey;
+public class GiteeImageModelConfig extends ImageConfig {
+
+    public GiteeImageModelConfig() {
+        super();
+        String endpoint = "https://ai.gitee.com";
+        String model = GiteeImageModels.flux_1_schnell;
+
+        setEndpoint(endpoint);
+        setModel(model);
+    }
+
 }
