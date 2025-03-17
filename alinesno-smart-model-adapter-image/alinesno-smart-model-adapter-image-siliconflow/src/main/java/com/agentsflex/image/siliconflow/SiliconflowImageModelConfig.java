@@ -16,62 +16,26 @@
 package com.agentsflex.image.siliconflow;
 
 
-import java.io.Serializable;
+import com.agentsflex.core.image.ImageConfig;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 
-public class SiliconflowImageModelConfig implements Serializable {
-    private String endpoint = "https://api.siliconflow.cn";
-    private String model = SiliconflowImageModels.flux_1_schnell;
-    private String apiKey;
+@EqualsAndHashCode(callSuper = true)
+@Data
+public class SiliconflowImageModelConfig extends ImageConfig {
+
     private Integer numInferenceSteps = 20;
     private Integer guidanceScale = 7;
     private String imageSize = "1024x1024";
 
+    public SiliconflowImageModelConfig() {
+        super();
 
-    public String getEndpoint() {
-        return endpoint;
+        String endpoint = "https://api.siliconflow.cn";
+        String model = SiliconflowImageModels.flux_1_schnell;
+
+        this.setEndpoint(endpoint);
+        this.setModel(model);
     }
 
-    public void setEndpoint(String endpoint) {
-        this.endpoint = endpoint;
-    }
-
-    public String getModel() {
-        return model;
-    }
-
-    public void setModel(String model) {
-        this.model = model;
-    }
-
-    public String getApiKey() {
-        return apiKey;
-    }
-
-    public void setApiKey(String apiKey) {
-        this.apiKey = apiKey;
-    }
-
-    public Integer getNumInferenceSteps() {
-        return numInferenceSteps;
-    }
-
-    public void setNumInferenceSteps(Integer numInferenceSteps) {
-        this.numInferenceSteps = numInferenceSteps;
-    }
-
-    public Integer getGuidanceScale() {
-        return guidanceScale;
-    }
-
-    public void setGuidanceScale(Integer guidanceScale) {
-        this.guidanceScale = guidanceScale;
-    }
-
-    public String getImageSize() {
-        return imageSize;
-    }
-
-    public void setImageSize(String imageSize) {
-        this.imageSize = imageSize;
-    }
 }
