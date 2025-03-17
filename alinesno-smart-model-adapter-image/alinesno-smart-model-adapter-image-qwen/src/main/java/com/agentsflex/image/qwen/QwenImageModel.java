@@ -5,7 +5,6 @@ import com.agentsflex.core.llm.client.HttpClient;
 import com.agentsflex.image.qwen.bean.InitialResponse;
 import com.agentsflex.image.qwen.bean.TaskResultResponse;
 import com.alibaba.fastjson2.JSON;
-import com.alibaba.fastjson2.JSONObject;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -135,44 +134,6 @@ public class QwenImageModel implements ImageModel {
     @Override
     public ImageResponse vary(VaryImageRequest request) {
         throw new IllegalStateException("QwenImageModel Can not support vary image.");
-    }
-
-    @Override
-    public UnderstandImageResponse understand(UnderstandImageRequest request) {
-        Map<String, String> headers = new HashMap<>();
-        headers.put("Content-Type", "application/json");
-        headers.put("Authorization", "Bearer " + config.getApiKey());
-
-        Map<String, Object> messagesContent = new HashMap<>();
-        messagesContent.put("role", "user");
-        messagesContent.put("content", List.of(
-            Map.of("type", "text", "text", request.getText()),
-            Map.of("type", "image_url", "image_url", Map.of("url", request.getImageUrl()))
-        ));
-
-        Map<String, Object> payloadMap = new HashMap<>();
-        payloadMap.put("model", config.getModel());
-        payloadMap.put("stream", false) ;
-        payloadMap.put("messages", List.of(messagesContent));
-
-        String payload = convertToJson(payloadMap);
-        String url = config.getUnderstandEndpoint();
-
-        String responseStr = httpClient.post(url, headers, payload);
-        // 解析 responseStr 中的 content 字段
-        JSONObject jsonObject = JSON.parseObject(responseStr);
-        List<JSONObject> choices = jsonObject.getJSONArray("choices").toList(JSONObject.class);
-        if (!choices.isEmpty()) {
-            JSONObject firstChoice = choices.get(0);
-            JSONObject message = firstChoice.getJSONObject("message");
-            String content = message.getString("content");
-
-            UnderstandImageResponse understandResponse = new UnderstandImageResponse();
-            understandResponse.setResponse(content);
-            return understandResponse;
-        } else {
-            return UnderstandImageResponse.error("No choices found in the response.");
-        }
     }
 
 }
