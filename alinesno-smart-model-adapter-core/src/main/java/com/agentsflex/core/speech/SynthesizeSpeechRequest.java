@@ -21,7 +21,7 @@ public class SynthesizeSpeechRequest extends BaseSpeechRequest {
      * 指定语音的性别，可取值为 "male" 或 "female"。
      * 用于选择合成语音时使用男性或女性的声音。
      */
-    private String voice;
+    private String voice = "FunAudioLLM/CosyVoice2-0.5B:alex";
 
     /**
      * 合成语音的输出格式，默认值为 "mp3"。
