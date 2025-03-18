@@ -60,7 +60,7 @@ public class SiliconflowLlm extends BaseLlm<SiliconflowLlmConfig> {
 
         String payload = SiliconflowLlmUtil.promptToPayload(prompt, config, options, false);
         String endpoint = config.getEndpoint();
-        String response = httpClient.post(endpoint + "/compatible-mode/v1/chat/completions", headers, payload);
+        String response = httpClient.post(endpoint + "/chat/completions", headers, payload);
 
         if (config.isDebug()) {
             System.out.println(">>>>receive payload:" + response);
@@ -98,7 +98,7 @@ public class SiliconflowLlm extends BaseLlm<SiliconflowLlmConfig> {
         LlmClientListener clientListener = new BaseLlmClientListener(this, llmClient, listener, prompt, streamMessageParser);
 
         String endpoint = config.getEndpoint();
-        llmClient.start(endpoint + "/compatible-mode/v1/chat/completions", headers, payload, clientListener, config);
+        llmClient.start(endpoint + "/chat/completions", headers, payload, clientListener, config);
     }
 
 
@@ -109,7 +109,7 @@ public class SiliconflowLlm extends BaseLlm<SiliconflowLlmConfig> {
         headers.put("Content-Type", "application/json");
         headers.put("Authorization", "Bearer " + getConfig().getApiKey());
 
-        String url = config.getEndpoint() + "/compatible-mode/v1/embeddings";
+        String url = config.getEndpoint() + "/embeddings";
         String response = httpClient.post(url, headers, payload);
 
         if (config.isDebug()) {
