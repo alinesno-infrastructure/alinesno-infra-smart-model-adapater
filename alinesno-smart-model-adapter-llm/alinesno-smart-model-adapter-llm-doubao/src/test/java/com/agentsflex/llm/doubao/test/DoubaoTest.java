@@ -18,7 +18,8 @@ public class DoubaoTest {
     public static void main(String[] args) throws InterruptedException {
         DoubaoLlmConfig config = new DoubaoLlmConfig();
 
-        config.setApiKey(System.getenv("ALINESNO_DOUBAO_GPT_API_KEY"));
+        config.setApiKey(System.getenv("ALINESNO_DOUBAO_API_KEY"));
+        config.setApiSecret(System.getenv("ALINESNO_DOUBAO_API_SECRET"));
         config.setModel("ep-20250210101146-9ds66");
 
         Llm llm = new DoubaoLlm(config);
