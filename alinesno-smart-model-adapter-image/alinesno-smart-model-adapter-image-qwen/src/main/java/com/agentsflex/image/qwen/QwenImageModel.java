@@ -4,7 +4,7 @@ import com.agentsflex.core.image.*;
 import com.agentsflex.core.llm.client.HttpClient;
 import com.agentsflex.image.qwen.bean.InitialResponse;
 import com.agentsflex.image.qwen.bean.TaskResultResponse;
-import com.alibaba.fastjson2.JSON;
+import com.alibaba.fastjson.JSON;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
