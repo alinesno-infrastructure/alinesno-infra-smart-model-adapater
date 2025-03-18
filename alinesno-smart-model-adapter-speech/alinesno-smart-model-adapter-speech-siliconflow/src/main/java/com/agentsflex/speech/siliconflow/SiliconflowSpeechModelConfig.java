@@ -1,14 +1,18 @@
 package com.agentsflex.speech.siliconflow;
 
+import com.agentsflex.core.speech.SpeechConfig;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
-import java.io.Serializable;
-
+@EqualsAndHashCode(callSuper = true)
 @Data
-public class SiliconflowSpeechModelConfig implements Serializable {
+public class SiliconflowSpeechModelConfig extends SpeechConfig {
 
-    private String endpoint = "https://api.siliconflow.cn/v1/audio/speech";
-    private String model = "FunAudioLLM/CosyVoice2-0.5B" ;
-    private String apiKey ;
+    public SiliconflowSpeechModelConfig() {
+        String endpoint = "https://api.siliconflow.cn/v1/audio/speech";
+        String model = "FunAudioLLM/CosyVoice2-0.5B" ;
 
+        setEndpoint(endpoint);
+        setModel(model);
+    }
 }
