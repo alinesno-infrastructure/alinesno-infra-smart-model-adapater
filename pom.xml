@@ -56,6 +56,7 @@
         <module>alinesno-smart-model-adapter-chain</module>
         <module>alinesno-smart-model-adapter-image</module>
         <module>alinesno-smart-model-adapter-speech</module>
+        <module>alinesno-smart-model-adapter-reranker</module>
     </modules>
 
     <properties>
