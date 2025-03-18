@@ -1,13 +1,15 @@
 package com.agentsflex.speech.qwen;
 
+import com.agentsflex.core.speech.SpeechConfig;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
-import java.io.Serializable;
-
+@EqualsAndHashCode(callSuper = true)
 @Data
-public class QwenSpeechModelConfig  implements Serializable {
+public class QwenSpeechModelConfig extends SpeechConfig {
 
-    private String model = "cosyvoice-v1";
-    private String apiKey ;
-
+    public QwenSpeechModelConfig() {
+        String model = "cosyvoice-v1";
+        setModel(model);
+    }
 }
