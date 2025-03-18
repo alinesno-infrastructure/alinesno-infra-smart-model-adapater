@@ -1,7 +1,9 @@
 package com.agentsflex.core.llm.embedding;
 
 import com.agentsflex.core.util.StringUtil;
+import lombok.Getter;
 
+@Getter
 public class EmbeddingOptions {
     public static final EmbeddingOptions DEFAULT = new EmbeddingOptions(){
         @Override
@@ -11,10 +13,6 @@ public class EmbeddingOptions {
     };
 
     private String model;
-
-    public String getModel() {
-        return model;
-    }
 
     public String getModelOrDefault(String defaultModel) {
         return StringUtil.noText(model) ? defaultModel : model;
