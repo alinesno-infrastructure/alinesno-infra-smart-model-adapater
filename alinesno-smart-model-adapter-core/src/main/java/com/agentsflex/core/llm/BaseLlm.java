@@ -15,6 +15,9 @@
  */
 package com.agentsflex.core.llm;
 
+import lombok.Getter;
+
+@Getter
 public abstract class BaseLlm<T extends LlmConfig> implements Llm {
 
     protected T config;
@@ -23,7 +26,4 @@ public abstract class BaseLlm<T extends LlmConfig> implements Llm {
         this.config = config;
     }
 
-    public T getConfig() {
-        return config;
-    }
 }
