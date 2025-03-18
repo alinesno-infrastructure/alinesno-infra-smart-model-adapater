@@ -16,11 +16,16 @@
 package com.agentsflex.core.llm;
 
 
+import lombok.Getter;
+import lombok.Setter;
+
 import java.util.List;
 
 /**
  * 每个大模型都可以有自己的实现类
  */
+@Setter
+@Getter
 public class ChatOptions {
 
     public static final ChatOptions DEFAULT = new ChatOptions() {
@@ -43,51 +48,4 @@ public class ChatOptions {
     private Integer maxTokens;
     private List<String> stop;
 
-    public String getSeed() {
-        return seed;
-    }
-
-    public void setSeed(String seed) {
-        this.seed = seed;
-    }
-
-    public Float getTemperature() {
-        return temperature;
-    }
-
-    public void setTemperature(Float temperature) {
-        this.temperature = temperature;
-    }
-
-    public Float getTopP() {
-        return topP;
-    }
-
-    public void setTopP(Float topP) {
-        this.topP = topP;
-    }
-
-    public Integer getTopK() {
-        return topK;
-    }
-
-    public void setTopK(Integer topK) {
-        this.topK = topK;
-    }
-
-    public Integer getMaxTokens() {
-        return maxTokens;
-    }
-
-    public void setMaxTokens(Integer maxTokens) {
-        this.maxTokens = maxTokens;
-    }
-
-    public List<String> getStop() {
-        return stop;
-    }
-
-    public void setStop(List<String> stop) {
-        this.stop = stop;
-    }
 }
