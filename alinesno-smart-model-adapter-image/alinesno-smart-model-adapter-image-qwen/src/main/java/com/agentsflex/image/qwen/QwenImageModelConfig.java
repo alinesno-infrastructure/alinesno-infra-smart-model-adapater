@@ -13,7 +13,7 @@ public class QwenImageModelConfig extends ImageConfig {
     public QwenImageModelConfig() {
 
         String endpoint = "https://dashscope.aliyuncs.com/api/v1/services/aigc/text2image/image-synthesis";
-        String model = QwenImageModels.wanx2_0_t2i_turbo;
+        String model = "wanx2.0-t2i-turbo" ; // QwenImageModels.wanx2_0_t2i_turbo;
 
         setEndpoint(endpoint);
         setModel(model);
