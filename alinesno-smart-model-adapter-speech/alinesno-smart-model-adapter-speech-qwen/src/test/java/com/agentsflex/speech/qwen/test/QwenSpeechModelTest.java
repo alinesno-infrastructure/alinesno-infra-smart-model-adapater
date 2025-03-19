@@ -22,10 +22,11 @@ public class QwenSpeechModelTest {
 
         SynthesizeSpeechRequest request = new SynthesizeSpeechRequest();
         request.setText("一间有着精致窗户的花店，漂亮的木质门，摆放着花朵");
+        request.setVoice("longxiaochun");
 
         SpeechResponse generate = openAiSpeechModel.synthesize(request);
         if (generate != null && generate.getSpeechMp3() != null){
-            generate.getSpeechMp3().writeToFile(new File("E:\\tmp\\mp3\\Speech_" + UUID.randomUUID() + ".mp3"));
+            generate.getSpeechMp3().writeToFile(new File("/Users/luodong/Desktop/demo-images/" + UUID.randomUUID() + ".mp3"));
         }
 
         System.out.println(generate);
