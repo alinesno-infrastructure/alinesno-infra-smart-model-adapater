@@ -41,6 +41,9 @@ public class SiliconflowSpeechModel implements SpeechModel {
      */
     @Override
     public SpeechResponse synthesize(SynthesizeSpeechRequest request) {
+
+        request.setVoice(config.getModel() + ":" + request.getVoice());
+
         // 创建一个新的语音响应对象，用于存储最终的响应结果
         SpeechResponse response = new SpeechResponse();
         try {
@@ -70,7 +73,6 @@ public class SiliconflowSpeechModel implements SpeechModel {
                 response.setErrorMessage("无法从 API 获取音频数据。");
             }
         } catch (Exception e) {
-            e.printStackTrace();
             // 捕获请求过程中可能出现的异常，并记录错误日志
             log.error("文本转语音过程中出现错误", e);
             // 标记响应为错误状态，并设置包含异常信息的错误信息
