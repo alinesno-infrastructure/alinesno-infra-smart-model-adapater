@@ -1,9 +1,6 @@
 package com.agentsflex.speech.qwen;
 
-import com.agentsflex.core.speech.RecognizeSpeechRequest;
-import com.agentsflex.core.speech.SpeechModel;
-import com.agentsflex.core.speech.SpeechResponse;
-import com.agentsflex.core.speech.SynthesizeSpeechRequest;
+import com.agentsflex.core.speech.*;
 import com.agentsflex.speech.qwen.parser.SenseVoiceParser;
 import com.alibaba.dashscope.audio.asr.transcription.*;
 import com.alibaba.dashscope.audio.ttsv2.SpeechSynthesisParam;
@@ -19,6 +16,7 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.ByteBuffer;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -56,7 +54,7 @@ public class QwenSpeechModel implements SpeechModel {
     }
 
     @Override
-    public SpeechResponse recognize(RecognizeSpeechRequest request) {
+    public List<RecognizeSpeechResponse> recognize(RecognizeSpeechRequest request) {
         // 创建转写请求参数，需要用真实apikey替换your-dashscope-api-key
         TranscriptionParam param =
             TranscriptionParam.builder()
@@ -65,6 +63,11 @@ public class QwenSpeechModel implements SpeechModel {
                 .fileUrls(request.getAudioList())
                 .parameter("language_hints", new String[] {"en" , "zh"})
                 .build();
+
+        List<RecognizeSpeechResponse> responseList = new ArrayList<>();
+
+        long startTime = System.currentTimeMillis();
+
         try {
             Transcription transcription = new Transcription();
 
@@ -88,14 +91,29 @@ public class QwenSpeechModel implements SpeechModel {
                     Gson gson = new GsonBuilder().setPrettyPrinting().create();
                     JsonElement jsonResult = gson.fromJson(reader, JsonObject.class);
 
-                    System.out.println(gson.toJson(jsonResult));
-                    System.out.println(gson.toJson(SenseVoiceParser.parseSenseVoiceResult(jsonResult.getAsJsonObject(), true, true, true)));
+                    String jsonString = gson.toJson(SenseVoiceParser.parseSenseVoiceResult(jsonResult.getAsJsonObject(), true, true, true));
+
+                    // 将 JSON 字符串转换为 RecognizeSpeechResponse 对象
+                    RecognizeSpeechResponse response = gson.fromJson(jsonString, RecognizeSpeechResponse.class);
+
+                    // 可以在这里对 response 对象进行操作
+                    log.debug("File URL: {}" , response.getFileUrl());
+
+                    long endTime = System.currentTimeMillis();
+                    long usageTime = (endTime - startTime) / 1000; // 转换成秒
+
+                    response.setUsageTime(usageTime);
+                    response.setEndTime(endTime);
+                    response.setStartTime(startTime);
+
+                    responseList.add(response);
                 }
             }
         } catch (Exception e) {
-            System.out.println("error: " + e);
+            log.error("语音识别异常: ", e);
+            return null ;
         }
 
-        return null ;
+        return responseList ;
     }
 }
