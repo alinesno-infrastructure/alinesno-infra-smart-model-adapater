@@ -1,5 +1,7 @@
 package com.agentsflex.core.speech;
 
+import java.util.List;
+
 /**
  * 语音模型，包括语音合成、语音识别两个接口
  */
@@ -17,5 +19,5 @@ public interface SpeechModel {
      * @param request
      * @return
      */
-    SpeechResponse recognize(RecognizeSpeechRequest request);
+    List<RecognizeSpeechResponse> recognize(RecognizeSpeechRequest request);
 }
