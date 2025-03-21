@@ -1,9 +1,8 @@
 package com.agentsflex.speech.doubao;
 
-import com.agentsflex.core.speech.RecognizeSpeechRequest;
-import com.agentsflex.core.speech.SpeechModel;
-import com.agentsflex.core.speech.SpeechResponse;
-import com.agentsflex.core.speech.SynthesizeSpeechRequest;
+import com.agentsflex.core.speech.*;
+
+import java.util.List;
 
 /**
  * Doubao语音识别接口
@@ -15,7 +14,7 @@ public class DoubaoSpeechModel implements SpeechModel {
     }
 
     @Override
-    public SpeechResponse recognize(RecognizeSpeechRequest request) {
+    public List<RecognizeSpeechResponse> recognize(RecognizeSpeechRequest request) {
         return null;
     }
 }
