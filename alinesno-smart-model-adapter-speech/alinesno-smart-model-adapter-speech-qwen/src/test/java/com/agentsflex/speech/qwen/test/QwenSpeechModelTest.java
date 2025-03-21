@@ -1,6 +1,7 @@
 package com.agentsflex.speech.qwen.test;
 
 import com.agentsflex.core.speech.RecognizeSpeechRequest;
+import com.agentsflex.core.speech.RecognizeSpeechResponse;
 import com.agentsflex.core.speech.SpeechResponse;
 import com.agentsflex.core.speech.SynthesizeSpeechRequest;
 import com.agentsflex.speech.qwen.QwenSpeechModel;
@@ -36,19 +37,17 @@ public class QwenSpeechModelTest {
     public void testRecognize(){
         QwenSpeechModelConfig config = new QwenSpeechModelConfig();
         config.setApiKey(System.getenv("ALINESNO_QIWEN_API_KEY")) ;
-        config.setModel("sensevoice-v1");
+        config.setModel("paraformer-v1");
 
         QwenSpeechModel openAiSpeechModel = new QwenSpeechModel(config);
 
         RecognizeSpeechRequest request = new RecognizeSpeechRequest();
-        request.setAudioList(List.of("http://data.linesno.com/ddaiai_whisper.wav" , "https://dashscope.oss-cn-beijing.aliyuncs.com/samples/audio/sensevoice/rich_text_example_1.wav")) ;
+        request.setAudioList(List.of("http://data.linesno.com/demo_2.wav" , "http://data.linesno.com/demo_2.wav")) ;
 
-        SpeechResponse generate = openAiSpeechModel.recognize(request);
-        if (generate != null && generate.getSpeechMp3() != null){
-            generate.getSpeechMp3().writeToFile(new File("E:\\tmp\\mp3\\Speech_" + UUID.randomUUID() + ".mp3"));
+        List<RecognizeSpeechResponse> generate = openAiSpeechModel.recognize(request);
+        for(RecognizeSpeechResponse speechResponse : generate){
+            System.out.println(speechResponse.getTranscripts().get(0).getText());
         }
-
-        System.out.println(generate);
     }
 
 }
