@@ -1,15 +1,13 @@
 package com.agentsflex.speech.siliconflow;
 
 import com.agentsflex.core.llm.client.HttpClient;
-import com.agentsflex.core.speech.RecognizeSpeechRequest;
-import com.agentsflex.core.speech.SpeechModel;
-import com.agentsflex.core.speech.SpeechResponse;
-import com.agentsflex.core.speech.SynthesizeSpeechRequest;
+import com.agentsflex.core.speech.*;
 import com.alibaba.fastjson.JSON;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -122,7 +120,7 @@ public class SiliconflowSpeechModel implements SpeechModel {
      * @return 包含语音识别结果或错误信息的响应对象，目前返回 null
      */
     @Override
-    public SpeechResponse recognize(RecognizeSpeechRequest request) {
+    public List<RecognizeSpeechResponse> recognize(RecognizeSpeechRequest request) {
         return null;
     }
 }
