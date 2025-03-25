@@ -27,7 +27,6 @@ import com.agentsflex.core.llm.client.impl.DnjsonClient;
 import com.agentsflex.core.llm.client.impl.SseClient;
 import com.agentsflex.core.llm.embedding.EmbeddingOptions;
 import com.agentsflex.core.llm.response.AiMessageResponse;
-import com.agentsflex.core.parser.AiMessageParser;
 import com.agentsflex.core.prompt.Prompt;
 import com.agentsflex.core.store.VectorData;
 import com.agentsflex.core.util.Maps;
@@ -35,15 +34,19 @@ import com.agentsflex.core.util.StringUtil;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.JSONPath;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.HashMap;
 import java.util.Map;
 
+@Getter
+@Setter
 public class OllamaLlm extends BaseLlm<OllamaLlmConfig> {
 
     private HttpClient httpClient = new HttpClient();
     private final DnjsonClient dnjsonClient = new DnjsonClient();
-    public AiMessageParser aiMessageParser = OllamaLlmUtil.getAiMessageParser();
+    public OllamaAiMessageParser aiMessageParser = OllamaLlmUtil.getAiMessageParser();
 
 
     public OllamaLlm(OllamaLlmConfig config) {
@@ -130,15 +133,8 @@ public class OllamaLlm extends BaseLlm<OllamaLlmConfig> {
         String payload = OllamaLlmUtil.promptToPayload(prompt, config, options, true);
 
         String endpoint = config.getEndpoint();
-        LlmClientListener clientListener = new BaseLlmClientListener(this, llmClient, listener, prompt, aiMessageParser);
+        LlmClientListener clientListener = new OllamaLlmClientListener(this, llmClient, listener, prompt, aiMessageParser);
         dnjsonClient.start(endpoint + "/api/chat", headers, payload, clientListener, config);
     }
 
-    public HttpClient getHttpClient() {
-        return httpClient;
-    }
-
-    public void setHttpClient(HttpClient httpClient) {
-        this.httpClient = httpClient;
-    }
 }
