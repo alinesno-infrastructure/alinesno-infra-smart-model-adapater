@@ -16,7 +16,7 @@ public class OllamaLlmTest {
     public void testChat() {
         OllamaLlmConfig config = new OllamaLlmConfig();
         config.setEndpoint("http://localhost:11434");
-        config.setModel("llama3");
+        config.setModel("qwq:32b");
         config.setDebug(true);
 
         Llm llm = new OllamaLlm(config);
@@ -29,13 +29,21 @@ public class OllamaLlmTest {
     public void testChatStream() throws InterruptedException {
         OllamaLlmConfig config = new OllamaLlmConfig();
         config.setEndpoint("http://localhost:11434");
-        config.setModel("llama3");
+        config.setModel("deepseek-r1:1.5b");
         config.setDebug(true);
 
         Llm llm = new OllamaLlm(config);
-        llm.chatStream("who are your", (context, response) -> System.out.println(response.getMessage().getContent()));
+        llm.chatStream("写一篇爱情故事", (context, response) -> {
+            if(response.getMessage().getFullReasoningContent() != null && !response.getMessage().getFullReasoningContent().isEmpty()){
+                System.out.println("推理:" + response.getMessage().getFullReasoningContent());
+            }
 
-        Thread.sleep(20000);
+            if(response.getMessage().getFullContent() != null && !response.getMessage().getFullContent().isEmpty()){
+                System.out.println("内容:" + response.getMessage().getFullContent());
+            }
+        });
+
+        Thread.sleep(60000);
     }
 
 
