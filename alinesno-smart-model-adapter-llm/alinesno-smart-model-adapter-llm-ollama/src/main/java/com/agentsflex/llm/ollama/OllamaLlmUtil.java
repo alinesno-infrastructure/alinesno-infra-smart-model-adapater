@@ -20,8 +20,6 @@ import com.agentsflex.core.llm.client.HttpClient;
 import com.agentsflex.core.message.FunctionCall;
 import com.agentsflex.core.message.Message;
 import com.agentsflex.core.message.MessageStatus;
-import com.agentsflex.core.parser.AiMessageParser;
-import com.agentsflex.core.parser.impl.DefaultAiMessageParser;
 import com.agentsflex.core.prompt.DefaultPromptFormat;
 import com.agentsflex.core.prompt.ImagePrompt;
 import com.agentsflex.core.prompt.Prompt;
@@ -58,8 +56,8 @@ public class OllamaLlmUtil {
     }
 
 
-    public static AiMessageParser getAiMessageParser() {
-        DefaultAiMessageParser aiMessageParser = new DefaultAiMessageParser();
+    public static OllamaAiMessageParser getAiMessageParser() {
+        OllamaAiMessageParser aiMessageParser = new OllamaAiMessageParser();
         aiMessageParser.setContentPath("$.message.content");
         aiMessageParser.setTotalTokensPath("$.eval_count");
         aiMessageParser.setCompletionTokensPath("$.prompt_eval_count");
