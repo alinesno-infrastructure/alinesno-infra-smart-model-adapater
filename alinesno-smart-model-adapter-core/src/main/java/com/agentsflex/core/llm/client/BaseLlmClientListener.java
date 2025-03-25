@@ -64,6 +64,7 @@ public class BaseLlmClientListener implements LlmClientListener {
         }
 
         try {
+            System.out.println(response);
             JSONObject jsonObject = JSON.parseObject(response);
 
             lastAiMessage = messageParser.parse(jsonObject);
