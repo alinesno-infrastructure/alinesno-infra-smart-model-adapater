@@ -40,6 +40,7 @@ public class QwqTest {
 
             System.out.println(">>>> 推理内容: " + message.getFullReasoningContent());
             System.out.println(">>>> 结果内容: " + message.getFullContent());
+            System.out.println(">>>> Token数: " + message.getTotalTokens());
 
         });
 
