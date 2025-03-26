@@ -47,21 +47,30 @@
     </scm>
 
     <modules>
+
+        <!-- 核心包 -->
         <module>alinesno-smart-model-adapter-bom</module>
         <module>alinesno-smart-model-adapter-core</module>
-        <module>alinesno-smart-model-adapter-llm</module>
-        <module>alinesno-smart-model-adapter-store</module>
-        <module>alinesno-smart-model-adapter-document-parser</module>
-        <module>alinesno-smart-model-adapter-spring-boot-starter</module>
-        <module>alinesno-smart-model-adapter-chain</module>
-        <module>alinesno-smart-model-adapter-image</module>
-        <module>alinesno-smart-model-adapter-speech</module>
-        <module>alinesno-smart-model-adapter-reranker</module>
+
+        <!-- 接入能力 -->
+        <module>alinesno-smart-model-adapter-llm</module>   <!-- LLM大模型和向量化 -->
+        <module>alinesno-smart-model-adapter-store</module>  <!-- 存储能力 -->
+        <module>alinesno-smart-model-adapter-document-parser</module> <!-- 文档解析 -->
+        <module>alinesno-smart-model-adapter-image</module> <!-- 图片处理 -->
+        <module>alinesno-smart-model-adapter-speech</module>  <!-- 语音识别 -->
+        <module>alinesno-smart-model-adapter-reranker</module> <!-- 重新排序 -->
+        <module>alinesno-smart-model-adapter-ocr</module>  <!-- OCR识别 -->
+        <module>alinesno-smart-model-adapter-vision</module>  <!-- 图像识别 -->
+
+        <!-- 调用能力 -->
+        <module>alinesno-smart-model-adapter-chain</module>  <!-- 链式调用 -->
+        <module>alinesno-smart-model-adapter-spring-boot-starter</module>  <!-- Spring Boot Starter -->
+
     </modules>
 
     <properties>
         <!-- alinesno-smart-model-adapter Version -->
-        <revision>2.1.0-M2-SNAPSHOT</revision>
+        <revision>2.2.0-M2-SNAPSHOT</revision>
         <maven.test.skip>true</maven.test.skip>
 
         <maven.compiler.source>17</maven.compiler.source>
