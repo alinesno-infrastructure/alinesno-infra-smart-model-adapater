@@ -2,7 +2,7 @@
 
 ## 示例代码
 
-历史对话 和 简单对话类似，只需要把 prompt 修改为 `HistoriesPrompt` 即可，代码如下：
+历史对话 和 简单对话类似，只需要把 prompt 修改为 `` 即可，代码如下：
 
 ```java
 public static void main(String[] args) {
