@@ -15,9 +15,7 @@
  */
 package com.agentflex.vision.qwen;
 
-import com.agentsflex.core.document.Document;
 import com.agentsflex.core.llm.ChatOptions;
-import com.agentsflex.core.llm.embedding.EmbeddingOptions;
 import com.agentsflex.core.message.HumanMessage;
 import com.agentsflex.core.message.Message;
 import com.agentsflex.core.parser.AiMessageParser;
@@ -54,11 +52,11 @@ public class QwenVisionUtil {
             .toJSON();
     }
 
-    public static String promptToEnabledPayload(Document text, EmbeddingOptions options, QwenVisionConfig config) {
-        return Maps.of("model", options.getModelOrDefault(config.getDefaultEmbeddingModel()))
-            .set("encoding_format", "float")
-            .set("input", text.getContent())
-            .toJSON();
-    }
+//    public static String promptToEnabledPayload(Document text, EmbeddingOptions options, QwenVisionConfig config) {
+//        return Maps.of("model", options.getModelOrDefault(config.getDefaultEmbeddingModel()))
+//            .set("encoding_format", "float")
+//            .set("input", text.getContent())
+//            .toJSON();
+//    }
 
 }
