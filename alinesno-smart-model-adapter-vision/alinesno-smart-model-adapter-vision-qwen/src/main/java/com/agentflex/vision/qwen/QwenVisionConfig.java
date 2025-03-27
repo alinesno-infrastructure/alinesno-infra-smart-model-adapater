@@ -21,16 +21,12 @@ import lombok.Getter;
 @Getter
 public class QwenVisionConfig extends LlmConfig {
 
-    private static final String DEFAULT_MODEL = "qwen-turbo";
+    private static final String DEFAULT_MODEL = "qwen-vl-plus";
     private static final String DEFAULT_ENDPOINT = "https://dashscope.aliyuncs.com";
-    private String defaultEmbeddingModel = "text-embedding-v1";
 
     public QwenVisionConfig() {
         setEndpoint(DEFAULT_ENDPOINT);
         setModel(DEFAULT_MODEL);
     }
 
-    public void setDefaultEmbeddingModel(String defaultEmbeddingModel) {
-        this.defaultEmbeddingModel = defaultEmbeddingModel;
-    }
 }
