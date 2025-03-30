@@ -16,9 +16,13 @@
 package com.agentsflex.core.vision;
 
 import com.agentsflex.core.document.Document;
+import com.agentsflex.core.llm.ChatOptions;
 import com.agentsflex.core.llm.Llm;
 import com.agentsflex.core.llm.LlmConfig;
+import com.agentsflex.core.llm.StreamResponseListener;
 import com.agentsflex.core.llm.embedding.EmbeddingOptions;
+import com.agentsflex.core.llm.response.AiMessageResponse;
+import com.agentsflex.core.prompt.Prompt;
 import com.agentsflex.core.store.VectorData;
 import lombok.Getter;
 
@@ -35,4 +39,36 @@ public abstract class BaseVision<T extends LlmConfig> implements Llm {
     public VectorData embed(Document document, EmbeddingOptions options) {
         return null;
     }
+
+    /**
+     * 文生成视频
+     * @param prompt
+     * @param options
+     * @return
+     */
+    public GenVideoResponse textToVideo(String prompt, ChatOptions options){
+        return null ;
+    }
+
+
+    /**
+     * 图生成视频
+     * @param prompt
+     * @param options
+     * @return
+     */
+    public GenVideoResponse imageToVideo(String prompt, String imageUrl ,  ChatOptions options){
+        return null ;
+    }
+
+    @Override
+    public AiMessageResponse chat(Prompt prompt, ChatOptions options) {
+        return null;
+    }
+
+    @Override
+    public void chatStream(Prompt prompt, StreamResponseListener listener, ChatOptions options) {
+
+    }
+
 }
