@@ -21,7 +21,9 @@
         <module>alinesno-smart-model-adapter-store-redis</module>
         <module>alinesno-smart-model-adapter-store-opensearch</module>
         <module>alinesno-smart-model-adapter-store-elasticsearch</module>
+        <module>alinesno-smart-model-adapter-store-pgvector</module>
         <module>alinesno-smart-model-adapter-store-vectorex</module>
+        <module>alinesno-smart-model-adapter-store-vectorexdb</module>
 
     </modules>
 
