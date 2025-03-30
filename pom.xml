@@ -85,6 +85,8 @@
         <fastjson.version>2.0.47</fastjson.version>
         <solon.version>3.0.2</solon.version>
         <spring-boot.version>2.7.18</spring-boot.version>
+
+        <dashscope.jdk.version>2.18.2</dashscope.jdk.version>
     </properties>
 
 
@@ -138,6 +140,19 @@
                 <version>${junit.version}</version>
             </dependency>
 
+            <!-- 引入千问大模型 API -->
+            <dependency>
+                <groupId>com.alibaba</groupId>
+                <artifactId>dashscope-sdk-java</artifactId>
+                <version>${dashscope.jdk.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.slf4j</groupId>
+                        <artifactId>slf4j-simple</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+
             <!--alinesno-smart-model-adapter dependency management-->
             <dependency>
                 <groupId>com.agentsflex</groupId>
@@ -187,7 +202,6 @@
                 <version>${revision}</version>
             </dependency>
             <!--image model end-->
-
 
             <!--llm start-->
             <dependency>
