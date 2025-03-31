@@ -15,7 +15,6 @@
 
     <modules>
         <module>alinesno-smart-model-adapter-vision-qwen</module> <!-- 阿里视觉模型VL -->
-        <module>alinesno-smart-model-adapter-vision-wan</module> <!-- 阿里通义万相 -->
     </modules>
 
 </project>
