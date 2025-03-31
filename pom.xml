@@ -60,7 +60,8 @@
         <module>alinesno-smart-model-adapter-speech</module>  <!-- 语音识别 -->
         <module>alinesno-smart-model-adapter-reranker</module> <!-- 重新排序 -->
         <module>alinesno-smart-model-adapter-ocr</module>  <!-- OCR识别 -->
-        <module>alinesno-smart-model-adapter-vision</module>  <!-- 图像识别 -->
+        <module>alinesno-smart-model-adapter-vision</module>  <!-- 图像识别理解 -->
+        <module>alinesno-smart-model-adapter-video</module>  <!-- 视频生成模型 -->
 
         <!-- 调用能力 -->
         <module>alinesno-smart-model-adapter-chain</module>  <!-- 链式调用 -->
