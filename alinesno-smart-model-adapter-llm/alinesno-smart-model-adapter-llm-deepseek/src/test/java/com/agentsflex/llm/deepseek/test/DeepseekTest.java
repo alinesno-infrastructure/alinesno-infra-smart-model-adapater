@@ -15,21 +15,8 @@ public class DeepseekTest {
     public static void main(String[] args) throws InterruptedException {
         DeepseekLlmConfig config = new DeepseekLlmConfig();
 
-        //https://bailian.console.aliyun.com/?apiKey=1#/api-key
-//        config.setApiKey(System.getenv("ALINESNO_DEEPSEEK_API_KEY"));
-
-        // config.setModel("deepseek-chat");
-
-        // 硅基流动
-//        config.setApiKey(System.getenv("ALINESNO_SILICONFLOW_API_KEY"));
-//        config.setModel("deepseek-ai/DeepSeek-R1");
-//        config.setModel("deepseek-ai/DeepSeek-V3");
-//        config.setEndpoint("https://api.siliconflow.cn/v1/");
-
-        // 阿里百炼
-        config.setEndpoint("https://dashscope.aliyuncs.com/compatible-mode/v1");
-        config.setApiKey(System.getenv("ALINESNO_QIWEN_API_KEY"));
-        config.setModel("deepseek-r1");
+        config.setApiKey(System.getenv("ALINESNO_DEEPSEEK_API_KEY"));
+        config.setModel("deepseek-chat");
 
         Llm llm = new DeepseekLlm(config);
 
