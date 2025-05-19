@@ -42,7 +42,7 @@ public interface Llm extends EmbeddingModel {
     AiMessageResponse chat(Prompt prompt, ChatOptions options);
 
     default void chatStream(String prompt, StreamResponseListener listener) {
-        this.chatStream(new TextPrompt(prompt), listener, ChatOptions.DEFAULT);
+        this.chatStream(new TextPrompt(prompt), listener, ChatOptions.DEFAULT );
     }
 
     default void chatStream(String prompt, StreamResponseListener listener, ChatOptions options) {
