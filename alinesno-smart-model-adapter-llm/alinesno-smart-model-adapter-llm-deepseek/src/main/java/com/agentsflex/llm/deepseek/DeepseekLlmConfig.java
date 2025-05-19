@@ -16,7 +16,9 @@
 package com.agentsflex.llm.deepseek;
 
 import com.agentsflex.core.llm.LlmConfig;
+import lombok.Getter;
 
+@Getter
 public class DeepseekLlmConfig extends LlmConfig {
 
     private static final String DEFAULT_MODEL = "deepseek-chat";
@@ -26,10 +28,6 @@ public class DeepseekLlmConfig extends LlmConfig {
     public DeepseekLlmConfig() {
         setEndpoint(DEFAULT_ENDPOINT);
         setModel(DEFAULT_MODEL);
-    }
-
-    public String getDefaultEmbeddingModel() {
-        return defaultEmbeddingModel;
     }
 
     public void setDefaultEmbeddingModel(String defaultEmbeddingModel) {
