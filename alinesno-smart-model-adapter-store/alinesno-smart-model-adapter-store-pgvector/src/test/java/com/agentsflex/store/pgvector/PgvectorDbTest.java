@@ -24,6 +24,7 @@ public class PgvectorDbTest {
         config.setUseHnswIndex(true);
         config.setAutoCreateCollection(true);
         config.setDefaultCollectionName("test");
+        config.setIndexName("test_index");
 
         PgvectorVectorStore store = new PgvectorVectorStore(config);
         Document doc = new Document("测试数据");
@@ -48,6 +49,7 @@ public class PgvectorDbTest {
         config.setUseHnswIndex(true);
         config.setAutoCreateCollection(true);
         config.setDefaultCollectionName("test");
+        config.setIndexName("test_index");
 
         PgvectorVectorStore store = new PgvectorVectorStore(config);
         List<Document> docs = new ArrayList<>(100);
@@ -77,6 +79,7 @@ public class PgvectorDbTest {
         config.setUseHnswIndex(true);
         config.setAutoCreateCollection(true);
         config.setDefaultCollectionName("test");
+        config.setIndexName("test_index");
         PgvectorVectorStore store = new PgvectorVectorStore(config);
 
         double[] vector = new double[1024];
@@ -102,6 +105,7 @@ public class PgvectorDbTest {
         config.setUseHnswIndex(true);
         config.setAutoCreateCollection(true);
         config.setDefaultCollectionName("test");
+        config.setIndexName("test_index");
         PgvectorVectorStore store = new PgvectorVectorStore(config);
 
         Document document = new Document("测试数据");
