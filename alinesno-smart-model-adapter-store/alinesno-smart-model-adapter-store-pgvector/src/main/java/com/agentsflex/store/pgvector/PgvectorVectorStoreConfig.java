@@ -17,6 +17,8 @@ package com.agentsflex.store.pgvector;
 
 import com.agentsflex.core.store.DocumentStoreConfig;
 import com.agentsflex.core.util.StringUtil;
+import lombok.Data;
+import lombok.Getter;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -25,7 +27,9 @@ import java.util.Map;
  * postgreSQL访问配置
  * https://github.com/pgvector/pgvector
  */
+@Data
 public class PgvectorVectorStoreConfig implements DocumentStoreConfig {
+    @Getter
     private String host;
     private int port = 5432;
     private String databaseName = "agent_vector";
@@ -36,12 +40,9 @@ public class PgvectorVectorStoreConfig implements DocumentStoreConfig {
     private boolean autoCreateCollection = true;
     private boolean useHnswIndex = false;
     private int vectorDimension = 1024;
+    private String indexName ;
 
     public PgvectorVectorStoreConfig() {
-    }
-
-    public String getHost() {
-        return host;
     }
 
     public void setHost(String host) {
