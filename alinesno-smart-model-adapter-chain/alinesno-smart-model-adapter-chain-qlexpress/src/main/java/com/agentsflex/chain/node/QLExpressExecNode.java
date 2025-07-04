@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2023-2025, alinesno-smart-model-adapter (fuhai999@gmail.com).
+ *  Copyright (c) 2023-2025, Agents-Flex (fuhai999@gmail.com).
  *  <p>
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -31,8 +31,8 @@ public class QLExpressExecNode extends CodeNode {
         ExpressRunner runner = new ExpressRunner();
         DefaultContext<String, Object> context = new DefaultContext<>();
 
-        Map<String, Object> parameters = getParameters(chain);
-        if (parameters != null) context.putAll(parameters);
+        Map<String, Object> parameterValues = chain.getParameterValues(this);
+        if (parameterValues != null) context.putAll(parameterValues);
 
         context.put("_chain", chain);
         context.put("_result", result);
@@ -50,8 +50,8 @@ public class QLExpressExecNode extends CodeNode {
         return "QLExpressExecNode{" +
             "code='" + code + '\'' +
             ", description='" + description + '\'' +
-            ", inputParameters=" + inputParameters +
-            ", outputKeys=" + outputKeys +
+            ", parameters=" + parameters +
+            ", outputDefs=" + outputDefs +
             ", id='" + id + '\'' +
             ", name='" + name + '\'' +
             ", async=" + async +
