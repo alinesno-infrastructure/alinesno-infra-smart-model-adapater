@@ -57,8 +57,9 @@ public class PgvectorVectorStore extends DocumentStore {
         this.defaultCollectionName = config.getDefaultCollectionName();
         this.config = config;
 
-        // 异步初始化数据库
-        new Thread(this::initDb).start();
+        // 初始化数据库
+        initDb() ;
+        // new Thread(this::initDb).start();
     }
 
     public void initDb() {
@@ -82,7 +83,7 @@ public class PgvectorVectorStore extends DocumentStore {
         String collectionName = options.getCollectionNameOrDefault(defaultCollectionName);
 
         try (Connection connection = getConnection()) {
-            PreparedStatement pstmt = connection.prepareStatement("insert into " + collectionName + " (id, content, vector, metadata) values (?, ?, ?, ?::jsonb)");
+            PreparedStatement pstmt = connection.prepareStatement("insert into " + collectionName + " (id, content, vector, metadata , index_name) values (?, ?, ?, ?::jsonb , ?)");
             for (Document doc : documents) {
                 Map<String, Object> metadatas = doc.getMetadataMap();
                 JSONObject jsonObject = JSON.parseObject(JSON.toJSONBytes(metadatas == null ? Collections.EMPTY_MAP : metadatas));
@@ -90,6 +91,7 @@ public class PgvectorVectorStore extends DocumentStore {
                 pstmt.setString(2, doc.getContent());
                 pstmt.setObject(3, PgvectorUtil.toPgVector(doc.getVector()));
                 pstmt.setString(4, jsonObject.toString());
+                pstmt.setString(5, config.getIndexName()); // 使用配置中的indexName
                 pstmt.addBatch();
             }
 
@@ -104,26 +106,49 @@ public class PgvectorVectorStore extends DocumentStore {
 
     private Boolean createCollection(String collectionName) {
         try (Connection connection = getConnection()) {
-            try (CallableStatement statement = connection.prepareCall("CREATE TABLE IF NOT EXISTS " + collectionName +
-                " (id varchar(100) PRIMARY KEY, content text, vector vector(" + config.getVectorDimension() + "), metadata jsonb)")) {
-                statement.execute();
+            // 创建表
+            try (Statement statement = connection.createStatement()) {
+                // 创建主表
+                statement.execute("CREATE TABLE IF NOT EXISTS " + collectionName + " (" +
+                    "id varchar(100) PRIMARY KEY, " +
+                    "content text, " +
+                    "vector vector(" + config.getVectorDimension() + "), " +
+                    "metadata jsonb," +
+                    "index_name varchar(100)" +
+                    ")");
+
+                // 添加字段注释
+                statement.execute("COMMENT ON TABLE " + collectionName + " IS '向量存储表'");
+                statement.execute("COMMENT ON COLUMN " + collectionName + ".id IS '文档唯一标识'");
+                statement.execute("COMMENT ON COLUMN " + collectionName + ".content IS '文档内容'");
+                statement.execute("COMMENT ON COLUMN " + collectionName + ".vector IS '文档向量'");
+                statement.execute("COMMENT ON COLUMN " + collectionName + ".metadata IS '文档元数据'");
+                statement.execute("COMMENT ON COLUMN " + collectionName + ".index_name IS '索引名称'");
             }
 
-            // 默认情况下，pgvector 执行精确的最近邻搜索，从而提供完美的召回率. 可以通过索引来修改 pgvector 的搜索方式，以获得更好的性能。
-            // By default, pgvector performs exact nearest neighbor search, which provides perfect recall.
+            // 创建HNSW索引（如果配置启用）
             if (config.isUseHnswIndex()) {
                 try (Statement stmt = connection.createStatement()) {
                     stmt.execute("CREATE INDEX IF NOT EXISTS " + collectionName + "_vector_idx ON " + collectionName +
                         " USING hnsw (vector vector_cosine_ops)");
+                    stmt.execute("COMMENT ON INDEX " + collectionName + "_vector_idx IS '向量余弦相似度索引'");
                 }
             }
 
+            connection.commit();
+            return true;
         } catch (SQLException e) {
             logger.error("create collection error", e);
+            try {
+                // 发生错误时尝试回滚
+                Connection connection = getConnection();
+                connection.rollback();
+                connection.close();
+            } catch (SQLException ex) {
+                logger.error("rollback error", ex);
+            }
             return false;
         }
-
-        return true;
     }
 
     @Override
@@ -159,13 +184,13 @@ public class PgvectorVectorStore extends DocumentStore {
     public List<Document> searchInternal(SearchWrapper searchWrapper, StoreOptions options) {
         StringBuilder sql = new StringBuilder("select ");
         if (searchWrapper.isOutputVector()) {
-            sql.append("id, vector, content, metadata");
+            sql.append("id, vector, content, metadata , index_name");
         } else {
-            sql.append("id,  content, metadata");
+            sql.append("id,  content, metadata , index_name");
         }
 
         sql.append(" from ").append(options.getCollectionNameOrDefault(defaultCollectionName));
-        sql.append(" where vector <=> ? < ? order by vector <=> ? LIMIT ?");
+        sql.append(" where vector <=> ? < ? and index_name = ? order by vector <=> ? LIMIT ?");
 
         try (Connection connection = getConnection()){
             // 使用余弦距离计算最相似的文档
@@ -174,8 +199,9 @@ public class PgvectorVectorStore extends DocumentStore {
             PGobject vector = PgvectorUtil.toPgVector(searchWrapper.getVector());
             stmt.setObject(1, vector);
             stmt.setObject(2, Optional.ofNullable(searchWrapper.getMinScore()).orElse(DEFAULT_SIMILARITY_THRESHOLD));
-            stmt.setObject(3, vector);
-            stmt.setObject(4, searchWrapper.getMaxResults());
+            stmt.setObject(3, config.getIndexName());
+            stmt.setObject(4, vector);
+            stmt.setObject(5, searchWrapper.getMaxResults());
 
             ResultSet resultSet = stmt.executeQuery();
             List<Document> documents = new ArrayList<>();
@@ -200,6 +226,65 @@ public class PgvectorVectorStore extends DocumentStore {
         }
     }
 
+//    @Override
+//    public List<Document> searchInternal(SearchWrapper searchWrapper, StoreOptions options) {
+//        StringBuilder sql = new StringBuilder("select ");
+//        if (searchWrapper.isOutputVector()) {
+//            sql.append("id, vector, content, metadata , index_name");
+//        } else {
+//            sql.append("id, content, metadata , index_name");
+//        }
+//
+//        sql.append(" from ").append(options.getCollectionNameOrDefault(defaultCollectionName));
+//        sql.append(" where vector <=> ? < ?");
+//
+//        // Add indexName filter if configured
+//        if (config.getIndexName() != null && !config.getIndexName().isEmpty()) {
+//            sql.append(" and index_name = ?");
+//        }
+//
+//        sql.append(" order by vector <=> ? LIMIT ?");
+//
+//        try (Connection connection = getConnection()) {
+//            // 使用余弦距离计算最相似的文档
+//            PreparedStatement stmt = connection.prepareStatement(sql.toString());
+//
+//            PGobject vector = PgvectorUtil.toPgVector(searchWrapper.getVector());
+//            int paramIndex = 1;
+//            stmt.setObject(paramIndex++, vector);
+//            stmt.setObject(paramIndex++, Optional.ofNullable(searchWrapper.getMinScore()).orElse(DEFAULT_SIMILARITY_THRESHOLD));
+//
+//            // Set indexName parameter if filtering by indexName
+//            if (config.getIndexName() != null && !config.getIndexName().isEmpty()) {
+//                stmt.setString(paramIndex++, config.getIndexName());
+//            }
+//
+//            stmt.setObject(paramIndex++, vector);
+//            stmt.setObject(paramIndex++, searchWrapper.getMaxResults());
+//
+//            ResultSet resultSet = stmt.executeQuery();
+//            List<Document> documents = new ArrayList<>();
+//            while (resultSet.next()) {
+//                Document doc = new Document();
+//                doc.setId(resultSet.getString("id"));
+//                doc.setContent(resultSet.getString("content"));
+//                doc.addMetadata(JSON.parseObject(resultSet.getString("metadata")));
+//
+//                if (searchWrapper.isOutputVector()) {
+//                    String vectorStr = resultSet.getString("vector");
+//                    doc.setVector(PgvectorUtil.fromPgVector(vectorStr));
+//                }
+//
+//                documents.add(doc);
+//            }
+//
+//            return documents;
+//        } catch (Exception e) {
+//            logger.error("Error searching in pgvector", e);
+//            return Collections.emptyList();
+//        }
+//    }
+
     @Override
     public StoreResult updateInternal(List<Document> documents, StoreOptions options) {
         if (documents == null || documents.isEmpty()) {
@@ -207,7 +292,7 @@ public class PgvectorVectorStore extends DocumentStore {
         }
 
         StringBuilder sql = new StringBuilder("UPDATE " + options.getCollectionNameOrDefault(defaultCollectionName) + " SET ");
-        sql.append("content = ?, vector = ?, metadata = ?::jsonb WHERE id = ?");
+        sql.append("content = ?, vector = ?, metadata = ?::jsonb, index_name = ? WHERE id = ?");
         try (Connection connection = getConnection()) {
             PreparedStatement pstmt = connection.prepareStatement(sql.toString());
             for (Document doc : documents) {
@@ -216,7 +301,8 @@ public class PgvectorVectorStore extends DocumentStore {
                 pstmt.setString(1, doc.getContent());
                 pstmt.setObject(2, PgvectorUtil.toPgVector(doc.getVector()));
                 pstmt.setString(3, metadataJson.toString());
-                pstmt.setString(4, String.valueOf(doc.getId()));
+                pstmt.setString(4, config.getIndexName()); // 使用配置中的indexName
+                pstmt.setString(5, String.valueOf(doc.getId()));
                 pstmt.addBatch();
             }
 
