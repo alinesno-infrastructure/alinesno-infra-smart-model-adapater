@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2023-2025, alinesno-smart-model-adapter (fuhai999@gmail.com).
+ *  Copyright (c) 2023-2025, Agents-Flex (fuhai999@gmail.com).
  *  <p>
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -29,9 +29,9 @@ public class GroovyExecNode extends CodeNode {
     protected Map<String, Object> executeCode(String code, Chain chain) {
         Binding binding = new Binding();
 
-        Map<String, Object> parameters = getParameters(chain);
-        if (parameters != null) {
-            parameters.forEach(binding::setVariable);
+        Map<String, Object> parameterValues = chain.getParameterValues(this);
+        if (parameterValues != null) {
+            parameterValues.forEach(binding::setVariable);
         }
 
         Map<String, Object> result = new HashMap<>();
@@ -40,7 +40,6 @@ public class GroovyExecNode extends CodeNode {
 
         GroovyShell shell = new GroovyShell(binding);
         shell.evaluate(code);
-
         return result;
     }
 
@@ -50,8 +49,8 @@ public class GroovyExecNode extends CodeNode {
             "inwardEdges=" + inwardEdges +
             ", code='" + code + '\'' +
             ", description='" + description + '\'' +
-            ", inputParameters=" + inputParameters +
-            ", outputKeys=" + outputKeys +
+            ", parameters=" + parameters +
+            ", outputDefs=" + outputDefs +
             ", id='" + id + '\'' +
             ", name='" + name + '\'' +
             ", async=" + async +
