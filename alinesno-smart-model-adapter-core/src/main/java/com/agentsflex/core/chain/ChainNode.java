@@ -27,7 +27,9 @@ public abstract class ChainNode implements Serializable {
 
     protected String id;
     protected String name;
-    protected boolean async;
+    protected String description;
+
+    protected boolean async = false;
     protected List<ChainEdge> inwardEdges;
     protected List<ChainEdge> outwardEdges;
 
@@ -35,6 +37,13 @@ public abstract class ChainNode implements Serializable {
 
     protected ContextMemory memory = new DefaultContextMemory();
     protected ChainNodeStatus nodeStatus = ChainNodeStatus.READY;
+
+
+    // 循环执行相关属性
+    protected boolean loopEnable = false;           // 是否启用循环执行
+    protected long loopIntervalMs = 1000;            // 循环间隔时间（毫秒）
+    protected NodeCondition loopBreakCondition;      // 跳出循环的条件
+    protected int maxLoopCount = 0;                  // 0 表示不限制循环次数
 
     public String getId() {
         return id;
@@ -50,6 +59,14 @@ public abstract class ChainNode implements Serializable {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public boolean isAsync() {
@@ -100,7 +117,13 @@ public abstract class ChainNode implements Serializable {
         this.nodeStatus = nodeStatus;
     }
 
-    protected abstract Map<String, Object> execute(Chain chain);
+    public void setNodeStatusFinished() {
+        if (this.nodeStatus == ChainNodeStatus.ERROR) {
+            this.setNodeStatus(ChainNodeStatus.FINISHED_ABNORMAL);
+        } else {
+            this.setNodeStatus(ChainNodeStatus.FINISHED_NORMAL);
+        }
+    }
 
     protected void addOutwardEdge(ChainEdge edge) {
         if (this.outwardEdges == null) {
@@ -114,5 +137,43 @@ public abstract class ChainNode implements Serializable {
             this.inwardEdges = new ArrayList<>();
         }
         this.inwardEdges.add(edge);
+    }
+
+    public boolean isLoopEnable() {
+        return loopEnable;
+    }
+
+    public void setLoopEnable(boolean loopEnable) {
+        this.loopEnable = loopEnable;
+    }
+
+    public long getLoopIntervalMs() {
+        return loopIntervalMs;
+    }
+
+    public void setLoopIntervalMs(long loopIntervalMs) {
+        this.loopIntervalMs = loopIntervalMs;
+    }
+
+    public NodeCondition getLoopBreakCondition() {
+        return loopBreakCondition;
+    }
+
+    public void setLoopBreakCondition(NodeCondition loopBreakCondition) {
+        this.loopBreakCondition = loopBreakCondition;
+    }
+
+    public int getMaxLoopCount() {
+        return maxLoopCount;
+    }
+
+    public void setMaxLoopCount(int maxLoopCount) {
+        this.maxLoopCount = maxLoopCount;
+    }
+
+    protected abstract Map<String, Object> execute(Chain chain);
+
+    public List<Parameter> getParameters() {
+        return null;
     }
 }
