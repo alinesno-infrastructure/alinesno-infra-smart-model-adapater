@@ -32,6 +32,7 @@ public class WanVisionTest {
         System.in.read();
     }
 
+
     @Test
     public void testImageToVideo() throws IOException {
 
