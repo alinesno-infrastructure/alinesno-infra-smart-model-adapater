@@ -17,6 +17,7 @@
     <modules>
         <module>alinesno-smart-model-adapter-chain-groovy</module>
         <module>alinesno-smart-model-adapter-chain-qlexpress</module>
+        <module>alinesno-smart-model-adapter-chain-js</module>
     </modules>
 
 </project>
