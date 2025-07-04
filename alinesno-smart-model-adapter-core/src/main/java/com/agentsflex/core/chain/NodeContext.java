@@ -18,6 +18,7 @@ package com.agentsflex.core.chain;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 public class NodeContext {
 
@@ -30,7 +31,6 @@ public class NodeContext {
 
     private AtomicInteger executeCount = new AtomicInteger(0);
     private List<String> executeEdgeIds = new ArrayList<>();
-
 
     public ChainNode getCurrentNode() {
         return currentNode;
@@ -60,7 +60,18 @@ public class NodeContext {
         return executeEdgeIds;
     }
 
-    public synchronized void recordTrigger(Chain.ExecuteNode executeNode) {
+    public boolean isUpstreamFullyExecuted() {
+        List<ChainEdge> inwardEdges = currentNode.getInwardEdges();
+        if (inwardEdges == null || inwardEdges.isEmpty()) {
+            return true;
+        }
+
+        List<String> shouldBeTriggerIds = inwardEdges.stream().map(ChainEdge::getId).collect(Collectors.toList());
+        return triggerEdgeIds.size() >= shouldBeTriggerIds.size()
+            && shouldBeTriggerIds.parallelStream().allMatch(triggerEdgeIds::contains);
+    }
+
+    public void recordTrigger(Chain.ExecuteNode executeNode) {
         this.currentNode = executeNode.currentNode;
         this.prevNode = executeNode.prevNode;
         this.fromEdgeId = executeNode.fromEdgeId;
@@ -69,7 +80,7 @@ public class NodeContext {
         triggerEdgeIds.add(executeNode.fromEdgeId);
     }
 
-    public void recordExecute(Chain.ExecuteNode executeNode) {
+    public synchronized void recordExecute(Chain.ExecuteNode executeNode) {
         executeCount.incrementAndGet();
         executeEdgeIds.add(executeNode.fromEdgeId);
     }
