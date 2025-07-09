@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>com.agentsflex</groupId>
+        <artifactId>parent</artifactId>
+        <version>${revision}</version>
+    </parent>
+
+    <name>alinesno-smart-model-adapter-store</name>
+    <artifactId>alinesno-smart-model-adapter-store</artifactId>
+
+    <packaging>pom</packaging>
+    <modules>
+        <module>alinesno-smart-model-adapter-store-qcloud</module>
+        <module>alinesno-smart-model-adapter-store-aliyun</module>
+        <module>alinesno-smart-model-adapter-store-chroma</module>
+        <module>alinesno-smart-model-adapter-store-milvus</module>
+        <module>alinesno-smart-model-adapter-store-redis</module>
+        <module>alinesno-smart-model-adapter-store-opensearch</module>
+        <module>alinesno-smart-model-adapter-store-elasticsearch</module>
+        <module>alinesno-smart-model-adapter-store-pgvector</module>
+        <module>alinesno-smart-model-adapter-store-vectorex</module>
+        <module>alinesno-smart-model-adapter-store-vectorexdb</module>
+
+    </modules>
+
+</project>
