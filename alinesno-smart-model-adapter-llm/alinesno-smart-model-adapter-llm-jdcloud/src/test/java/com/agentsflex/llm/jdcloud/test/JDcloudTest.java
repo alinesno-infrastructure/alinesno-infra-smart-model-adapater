@@ -24,8 +24,8 @@ public class JDcloudTest {
         Llm llm = new JDcloudLlm(config);
         llm.chatStream("请写一个小兔子战胜大灰狼的故事", (context, response) -> {
             AiMessage message = response.getMessage();
-            System.out.println("推理>>>> " + message.getFullReasoningContent());
-            System.out.println("内容>>>> " + message.getFullContent());
+            System.out.println(message.getStatus() + "推理>>>> " + message.getFullReasoningContent());
+            System.out.println(message.getStatus() +  "内容>>>> " + message.getFullContent());
         });
 
         Thread.sleep(60*1000);
