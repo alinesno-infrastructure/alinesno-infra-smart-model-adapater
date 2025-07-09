@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>com.agentsflex</groupId>
+        <artifactId>parent</artifactId>
+        <version>${revision}</version>
+    </parent>
+
+    <name>alinesno-smart-model-adapter-llm</name>
+    <artifactId>alinesno-smart-model-adapter-llm</artifactId>
+
+    <packaging>pom</packaging>
+    <modules>
+        <module>alinesno-smart-model-adapter-llm-openai</module>
+        <module>alinesno-smart-model-adapter-llm-spark</module>
+        <module>alinesno-smart-model-adapter-llm-qwen</module>
+        <module>alinesno-smart-model-adapter-llm-jdcloud</module>
+        <module>alinesno-smart-model-adapter-llm-chatglm</module>
+        <module>alinesno-smart-model-adapter-llm-ollama</module>
+        <module>alinesno-smart-model-adapter-llm-moonshot</module>
+        <module>alinesno-smart-model-adapter-llm-coze</module>
+        <module>alinesno-smart-model-adapter-llm-gitee</module>
+        <module>alinesno-smart-model-adapter-llm-deepseek</module>  <!-- deepseek推理框架 -->
+        <module>alinesno-smart-model-adapter-llm-qwq</module>  <!-- 阿里qwq推理框架 -->
+        <module>alinesno-smart-model-adapter-llm-doubao</module>
+        <module>alinesno-smart-model-adapter-llm-siliconflow</module>  <!-- 硅基流动 -->
+    </modules>
+
+</project>
