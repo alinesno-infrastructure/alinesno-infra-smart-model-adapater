@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>com.agentsflex</groupId>
+        <artifactId>parent</artifactId>
+        <version>${revision}</version>
+    </parent>
+
+    <name>alinesno-smart-model-adapter-ocr</name>
+    <artifactId>alinesno-smart-model-adapter-ocr</artifactId>
+    <packaging>pom</packaging>
+
+    <!-- 语音识别模块 -->
+
+    <modules>
+        <module>alinesno-smart-model-adapter-ocr-aip</module> <!-- AIP OCR图像识别 -->
+        <module>alinesno-smart-model-adapter-ocr-aliyun</module> <!-- 阿里云 OCR图像识别 -->
+    </modules>
+
+</project>
