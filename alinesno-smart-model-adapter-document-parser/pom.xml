@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>com.agentsflex</groupId>
+        <artifactId>parent</artifactId>
+        <version>${revision}</version>
+    </parent>
+
+    <name>alinesno-smart-model-adapter-document-parser</name>
+    <artifactId>alinesno-smart-model-adapter-document-parser</artifactId>
+    <packaging>pom</packaging>
+
+    <modules>
+        <module>alinesno-smart-model-adapter-document-parser-pdfbox</module>
+        <module>alinesno-smart-model-adapter-document-parser-poi</module>
+        <module>alinesno-smart-model-adapter-document-parser-omniparse</module>
+    </modules>
+
+</project>
