@@ -35,12 +35,11 @@ public class JDcloudLlmUtil {
     private static final PromptFormat promptFormat = new DefaultPromptFormat();
 
     public static AiMessageParser getAiMessageParser(boolean isStream) {
-        return DefaultAiMessageParser.getChatGPTMessageParser(isStream);
+        return JDcloudAiMessageParser.getChatGPTMessageParser(isStream);
     }
 
 
     public static String promptToPayload(Prompt prompt, JDcloudLlmConfig config, ChatOptions options, boolean withStream) {
-        // https://help.aliyun.com/zh/dashscope/developer-reference/api-details?spm=a2c4g.11186623.0.0.1ff6fa70jCgGRc#b8ebf6b25eul6
         List<Message> messages = prompt.toMessages();
         HumanMessage humanMessage = (HumanMessage) CollectionUtil.lastItem(messages);
         return Maps.of("model", config.getModel())
@@ -56,7 +55,6 @@ public class JDcloudLlmUtil {
     }
 
     public static String promptToEnabledPayload(Document text, EmbeddingOptions options, JDcloudLlmConfig config) {
-        //https://help.aliyun.com/zh/model-studio/developer-reference/embedding-interfaces-compatible-with-openai?spm=a2c4g.11186623.0.i3
         return Maps.of("model", options.getModelOrDefault(config.getDefaultEmbeddingModel()))
             .set("encoding_format", "float")
             .set("input", text.getContent())
