@@ -141,7 +141,7 @@ public class DefaultAiMessageParser implements AiMessageParser {
 
         aiMessageParser.setStatusParser(content -> {
             Object finishReason = JSONPath.eval(content, "$.choices[0].finish_reason");
-            if (finishReason != null) {
+            if (finishReason != null && StringUtil.hasText(finishReason+"")) {
                 return MessageStatus.END;
             }
             return MessageStatus.MIDDLE;
