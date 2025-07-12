@@ -20,4 +20,5 @@
         <module>alinesno-smart-model-adapter-ocr-aliyun</module> <!-- 阿里云 OCR图像识别 -->
     </modules>
 
+
 </project>
