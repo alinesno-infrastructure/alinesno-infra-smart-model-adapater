@@ -31,9 +31,11 @@ import com.agentsflex.core.util.StringUtil;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import lombok.Getter;
 
 import java.util.*;
 
+@Getter
 public class LlmNode extends BaseNode {
 
     protected Llm llm;
@@ -57,16 +59,8 @@ public class LlmNode extends BaseNode {
     }
 
 
-    public Llm getLlm() {
-        return llm;
-    }
-
     public void setLlm(Llm llm) {
         this.llm = llm;
-    }
-
-    public String getUserPrompt() {
-        return userPrompt;
     }
 
     public void setUserPrompt(String userPrompt) {
@@ -75,18 +69,10 @@ public class LlmNode extends BaseNode {
             ? TextPromptTemplate.of(userPrompt) : null;
     }
 
-    public String getSystemPrompt() {
-        return systemPrompt;
-    }
-
     public void setSystemPrompt(String systemPrompt) {
         this.systemPrompt = systemPrompt;
         this.systemPromptTemplate = StringUtil.hasText(systemPrompt)
             ? TextPromptTemplate.of(systemPrompt) : null;
-    }
-
-    public ChatOptions getChatOptions() {
-        return chatOptions;
     }
 
     public void setChatOptions(ChatOptions chatOptions) {
@@ -94,10 +80,6 @@ public class LlmNode extends BaseNode {
             chatOptions = ChatOptions.DEFAULT;
         }
         this.chatOptions = chatOptions;
-    }
-
-    public String getOutType() {
-        return outType;
     }
 
     public void setOutType(String outType) {
@@ -209,8 +191,7 @@ public class LlmNode extends BaseNode {
         String name = output.getName();
         DataType dataType = output.getDataType();
         switch (dataType) {
-            case Array:
-            case Array_Object:
+            case Array, Array_Object -> {
                 if (output.getChildren() == null || output.getChildren().isEmpty()) {
                     return data.get(name);
                 }
@@ -227,24 +208,25 @@ public class LlmNode extends BaseNode {
                     }
                 }
                 return subResultList;
-            case Object:
+            }
+            case Object -> {
                 return (output.getChildren() != null && !output.getChildren().isEmpty()) ? getChildrenResult(output.getChildren(), sub ? data : (JSONObject) data.get(name), sub) : data.get(name);
-            case String:
-            case Number:
-            case Boolean:
+            }
+            case String, Number, Boolean -> {
                 Object obj = data.get(name);
                 return (DataType.String == dataType) ? (obj instanceof String ? obj : "") : (DataType.Number == dataType) ? (obj instanceof Number ? obj : 0) : obj instanceof Boolean ? obj : false;
-            case Array_String:
-            case Array_Number:
-            case Array_Boolean:
+            }
+            case Array_String, Array_Number, Array_Boolean -> {
                 Object arrayObj = data.get(name);
                 if (arrayObj instanceof JSONArray) {
                     ((JSONArray) arrayObj).removeIf(o -> arrayRemoveFlag(dataType, o));
                     return arrayObj;
                 }
                 return Collections.emptyList();
-            default:
+            }
+            default -> {
                 return ""; // FILE和其他不支持的类型，默认空字符串
+            }
         }
     }
 
