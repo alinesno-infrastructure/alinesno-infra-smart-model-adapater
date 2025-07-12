@@ -1,5 +1,7 @@
 package com.agentflex.ocr.aip;
 
+import com.agentflex.ocr.aliyun.AliyunOcrModel;
+import com.agentflex.ocr.aliyun.AliyunOcrModelConfig;
 import com.agentsflex.core.ocr.OcrRequest;
 import com.agentsflex.core.ocr.OcrResponse;
 import org.junit.Test;
@@ -10,9 +12,9 @@ public class AipOcrModelTest {
 
     @Test
     public void testRecognize() {
-        AipOcrModelConfig config = new AipOcrModelConfig();
+        AliyunOcrModelConfig config = new AliyunOcrModelConfig();
 
-        AipOcrModel ocrModel = new AipOcrModel(config);
+        AliyunOcrModel ocrModel = new AliyunOcrModel(config);
 
         OcrRequest ocrRequest = new OcrRequest();
         ocrRequest.setImage(new File("C:\\Users\\luoandon\\Pictures\\微信图片_20240415154642.png"));
