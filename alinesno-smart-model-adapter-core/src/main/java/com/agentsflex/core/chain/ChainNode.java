@@ -17,12 +17,14 @@ package com.agentsflex.core.chain;
 
 import com.agentsflex.core.memory.ContextMemory;
 import com.agentsflex.core.memory.DefaultContextMemory;
+import lombok.Getter;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+@Getter
 public abstract class ChainNode implements Serializable {
 
     protected String id;
@@ -38,6 +40,9 @@ public abstract class ChainNode implements Serializable {
     protected ContextMemory memory = new DefaultContextMemory();
     protected ChainNodeStatus nodeStatus = ChainNodeStatus.READY;
 
+    // 链路执行相关属性
+    protected boolean callbackEnable = false ; // 是否允许回调
+    protected NodeCondition callbackBreakCondition;  // 跳出回调条件
 
     // 循环执行相关属性
     protected boolean loopEnable = false;           // 是否启用循环执行
@@ -45,72 +50,36 @@ public abstract class ChainNode implements Serializable {
     protected NodeCondition loopBreakCondition;      // 跳出循环的条件
     protected int maxLoopCount = 0;                  // 0 表示不限制循环次数
 
-    public String getId() {
-        return id;
-    }
-
     public void setId(String id) {
         this.id = id;
-    }
-
-    public String getName() {
-        return name;
     }
 
     public void setName(String name) {
         this.name = name;
     }
 
-    public String getDescription() {
-        return description;
-    }
-
     public void setDescription(String description) {
         this.description = description;
-    }
-
-    public boolean isAsync() {
-        return async;
     }
 
     public void setAsync(boolean async) {
         this.async = async;
     }
 
-    public List<ChainEdge> getInwardEdges() {
-        return inwardEdges;
-    }
-
     public void setInwardEdges(List<ChainEdge> inwardEdges) {
         this.inwardEdges = inwardEdges;
-    }
-
-    public List<ChainEdge> getOutwardEdges() {
-        return outwardEdges;
     }
 
     public void setOutwardEdges(List<ChainEdge> outwardEdges) {
         this.outwardEdges = outwardEdges;
     }
 
-    public NodeCondition getCondition() {
-        return condition;
-    }
-
     public void setCondition(NodeCondition condition) {
         this.condition = condition;
     }
 
-    public ContextMemory getMemory() {
-        return memory;
-    }
-
     public void setMemory(ContextMemory memory) {
         this.memory = memory;
-    }
-
-    public ChainNodeStatus getNodeStatus() {
-        return nodeStatus;
     }
 
     public void setNodeStatus(ChainNodeStatus nodeStatus) {
@@ -139,32 +108,16 @@ public abstract class ChainNode implements Serializable {
         this.inwardEdges.add(edge);
     }
 
-    public boolean isLoopEnable() {
-        return loopEnable;
-    }
-
     public void setLoopEnable(boolean loopEnable) {
         this.loopEnable = loopEnable;
-    }
-
-    public long getLoopIntervalMs() {
-        return loopIntervalMs;
     }
 
     public void setLoopIntervalMs(long loopIntervalMs) {
         this.loopIntervalMs = loopIntervalMs;
     }
 
-    public NodeCondition getLoopBreakCondition() {
-        return loopBreakCondition;
-    }
-
     public void setLoopBreakCondition(NodeCondition loopBreakCondition) {
         this.loopBreakCondition = loopBreakCondition;
-    }
-
-    public int getMaxLoopCount() {
-        return maxLoopCount;
     }
 
     public void setMaxLoopCount(int maxLoopCount) {
