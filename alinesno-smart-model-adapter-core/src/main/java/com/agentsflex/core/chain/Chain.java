@@ -22,6 +22,7 @@ import com.agentsflex.core.util.MapUtil;
 import com.agentsflex.core.util.NamedThreadPools;
 import com.agentsflex.core.util.StringUtil;
 import com.alibaba.fastjson.JSONPath;
+import lombok.Getter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,6 +33,7 @@ import java.util.concurrent.Phaser;
 import java.util.stream.Collectors;
 
 
+@Getter
 public class Chain extends ChainNode {
     private static final Logger log = LoggerFactory.getLogger(Chain.class);
     protected Chain parent;
@@ -83,10 +85,6 @@ public class Chain extends ChainNode {
         this.message = holder.getMessage();
     }
 
-
-    public Map<Class<?>, List<ChainEventListener>> getEventListeners() {
-        return eventListeners;
-    }
 
     public void setEventListeners(Map<Class<?>, List<ChainEventListener>> eventListeners) {
         this.eventListeners = eventListeners;
@@ -140,10 +138,6 @@ public class Chain extends ChainNode {
         this.suspendListeners.remove(listener);
     }
 
-    public List<ChainOutputListener> getOutputListeners() {
-        return outputListeners;
-    }
-
     public void setOutputListeners(List<ChainOutputListener> outputListeners) {
         this.outputListeners = outputListeners;
     }
@@ -153,10 +147,6 @@ public class Chain extends ChainNode {
             this.outputListeners = new ArrayList<>();
         }
         this.outputListeners.add(outputListener);
-    }
-
-    public List<ChainNode> getNodes() {
-        return nodes;
     }
 
     public void setNodes(List<ChainNode> chainNodes) {
@@ -191,10 +181,6 @@ public class Chain extends ChainNode {
         this.children.add(child);
     }
 
-    public ChainStatus getStatus() {
-        return status;
-    }
-
     public void setStatus(ChainStatus status) {
         this.status = status;
     }
@@ -209,16 +195,8 @@ public class Chain extends ChainNode {
     }
 
 
-    public Chain getParent() {
-        return parent;
-    }
-
     public void setParent(Chain parent) {
         this.parent = parent;
-    }
-
-    public List<Chain> getChildren() {
-        return children;
     }
 
     public void setChildren(List<Chain> children) {
@@ -238,64 +216,32 @@ public class Chain extends ChainNode {
     }
 
 
-    public Map<String, Object> getExecuteResult() {
-        return executeResult;
-    }
-
     public void setExecuteResult(Map<String, Object> executeResult) {
         this.executeResult = executeResult;
-    }
-
-    public List<ChainErrorListener> getChainErrorListeners() {
-        return chainErrorListeners;
     }
 
     public void setChainErrorListeners(List<ChainErrorListener> chainErrorListeners) {
         this.chainErrorListeners = chainErrorListeners;
     }
 
-    public List<NodeErrorListener> getNodeErrorListeners() {
-        return nodeErrorListeners;
-    }
-
     public void setNodeErrorListeners(List<NodeErrorListener> nodeErrorListeners) {
         this.nodeErrorListeners = nodeErrorListeners;
-    }
-
-    public List<ChainSuspendListener> getSuspendListeners() {
-        return suspendListeners;
     }
 
     public void setSuspendListeners(List<ChainSuspendListener> suspendListeners) {
         this.suspendListeners = suspendListeners;
     }
 
-    public Map<String, NodeContext> getNodeContexts() {
-        return nodeContexts;
-    }
-
     public void setNodeContexts(Map<String, NodeContext> nodeContexts) {
         this.nodeContexts = nodeContexts;
-    }
-
-    public Map<String, ChainNode> getSuspendNodes() {
-        return suspendNodes;
     }
 
     public void setSuspendNodes(Map<String, ChainNode> suspendNodes) {
         this.suspendNodes = suspendNodes;
     }
 
-    public Exception getException() {
-        return exception;
-    }
-
     public void setException(Exception exception) {
         this.exception = exception;
-    }
-
-    public Phaser getPhaser() {
-        return phaser;
     }
 
     public void setPhaser(Phaser phaser) {
@@ -573,12 +519,16 @@ public class Chain extends ChainNode {
             return;
         }
 
+        // 是否允许回调，允许则不执行下一步
+        if (currentNode.isCallbackEnable()) {
+            return ;
+        }
+
         // 继续执行下一个节点
         if (!currentNode.isLoopEnable()) {
             doExecuteNextNodes(currentNode);
             return;
         }
-
 
         // 检查是否达到最大循环次数
         if (currentNode.getMaxLoopCount() > 0 && nodeContext.getExecuteCount() >= currentNode.getMaxLoopCount()) {
@@ -592,7 +542,6 @@ public class Chain extends ChainNode {
             doExecuteNextNodes(currentNode);
             return;
         }
-
 
         // 等待间隔
         long loopIntervalMs = currentNode.getLoopIntervalMs();
@@ -766,15 +715,6 @@ public class Chain extends ChainNode {
     }
 
 
-    public String getMessage() {
-        return message;
-    }
-
-
-    public List<ChainEdge> getEdges() {
-        return edges;
-    }
-
     public void setEdges(List<ChainEdge> edges) {
         this.edges = edges;
     }
@@ -805,16 +745,8 @@ public class Chain extends ChainNode {
         this.message = message;
     }
 
-    public ExecutorService getAsyncNodeExecutors() {
-        return asyncNodeExecutors;
-    }
-
     public void setAsyncNodeExecutors(ExecutorService asyncNodeExecutors) {
         this.asyncNodeExecutors = asyncNodeExecutors;
-    }
-
-    public List<Parameter> getSuspendForParameters() {
-        return suspendForParameters;
     }
 
     public void setSuspendForParameters(List<Parameter> suspendForParameters) {
