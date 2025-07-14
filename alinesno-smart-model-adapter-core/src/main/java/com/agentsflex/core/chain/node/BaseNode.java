@@ -17,10 +17,12 @@ package com.agentsflex.core.chain.node;
 
 import com.agentsflex.core.chain.ChainNode;
 import com.agentsflex.core.chain.Parameter;
+import lombok.Getter;
 
 import java.util.Collection;
 import java.util.List;
 
+@Getter
 public abstract class BaseNode extends ChainNode {
 
     protected List<Parameter> parameters;
@@ -30,10 +32,6 @@ public abstract class BaseNode extends ChainNode {
         this.parameters = parameters;
     }
 
-    public List<Parameter> getParameters() {
-        return parameters;
-    }
-
     public void addInputParameter(Parameter parameter) {
         if (parameters == null) {
             parameters = new java.util.ArrayList<>();
@@ -41,10 +39,6 @@ public abstract class BaseNode extends ChainNode {
         parameters.add(parameter);
     }
 
-
-    public List<Parameter> getOutputDefs() {
-        return outputDefs;
-    }
 
     public void setOutputDefs(List<Parameter> outputDefs) {
         this.outputDefs = outputDefs;
