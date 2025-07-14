@@ -19,25 +19,20 @@ import com.agentsflex.core.chain.Chain;
 import com.agentsflex.core.chain.Parameter;
 import com.agentsflex.core.chain.RefType;
 import com.agentsflex.core.util.StringUtil;
+import lombok.Getter;
 
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+@Getter
 public class EndNode extends BaseNode {
+
     private boolean normal = true;
     private String message;
 
-    public String getMessage() {
-        return message;
-    }
-
     public void setMessage(String message) {
         this.message = message;
-    }
-
-    public boolean isNormal() {
-        return normal;
     }
 
     public void setNormal(boolean normal) {
