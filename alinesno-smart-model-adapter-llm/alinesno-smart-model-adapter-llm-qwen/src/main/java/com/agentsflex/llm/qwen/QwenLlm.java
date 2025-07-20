@@ -59,7 +59,7 @@ public class QwenLlm extends BaseLlm<QwenLlmConfig> {
 
         String payload = QwenLlmUtil.promptToPayload(prompt, config, options, false);
         String endpoint = config.getEndpoint();
-        String response = httpClient.post(endpoint + "/compatible-mode/v1/chat/completions", headers, payload);
+        String response = httpClient.post(endpoint + "/chat/completions", headers, payload);
 
         if (config.isDebug()) {
             System.out.println(">>>>receive payload:" + response);
