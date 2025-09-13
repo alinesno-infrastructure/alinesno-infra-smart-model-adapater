@@ -1,15 +1,12 @@
 package com.agentsflex.image.doubao;
 
 import com.agentsflex.core.image.*;
-import com.agentsflex.image.doubao.bean.ResponseWrapper;
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import com.volcengine.service.visual.IVisualService;
-import com.volcengine.service.visual.impl.VisualServiceImpl;
+import com.volcengine.ark.runtime.model.images.generation.GenerateImagesRequest;
+import com.volcengine.ark.runtime.model.images.generation.ImagesResponse;
+import com.volcengine.ark.runtime.service.ArkService;
 import lombok.extern.slf4j.Slf4j;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
+import okhttp3.*;
 
 import java.io.File;
 import java.io.IOException;
@@ -17,6 +14,7 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 @Slf4j
 public class DoubaoImageModel implements ImageModel {
@@ -31,37 +29,47 @@ public class DoubaoImageModel implements ImageModel {
     public ImageResponse generate(GenerateImageRequest request) {
 
         // 初始化视觉服务并设置密钥
-        IVisualService visualService = VisualServiceImpl.getInstance();
-        visualService.setAccessKey(config.getAccessKey());
-        visualService.setSecretKey(config.getSecretKey());
+//        IVisualService visualService = VisualServiceImpl.getInstance();
+//        visualService.setAccessKey(config.getAccessKey());
+//        visualService.setSecretKey(config.getSecretKey());
 
-        // 获取请求 JSON 对象
-        JSONObject jsonObject = getJsonObject(request);
+//        // 获取请求 JSON 对象
+//        JSONObject jsonObject = getJsonObject(request);
 
         try {
-            // 调用视觉服务进行图片生成
-            Object response = visualService.cvProcess(jsonObject);
-            String responseJson = JSONObject.toJSONString(response);
-            log.info("responseJson: {}", responseJson);
+            String apiKey = config.getApiKey();
+            ConnectionPool connectionPool = new ConnectionPool(5, 1, TimeUnit.SECONDS);
+            Dispatcher dispatcher = new Dispatcher();
+            ArkService service = ArkService.builder().dispatcher(dispatcher).connectionPool(connectionPool).apiKey(apiKey).build();
 
-            // 解析 responseJson 为 JSONObject
-            ResponseWrapper responseWrapper = JSON.parseObject(responseJson, ResponseWrapper.class);
-            int status = responseWrapper.getStatus() ;
-            int code = responseWrapper.getCode() ;
+            GenerateImagesRequest generateRequest = GenerateImagesRequest.builder()
+                .model(config.getModel())
+                .prompt(request.getPrompt())
+                .build();
 
-            if (status == 10000 && code == 10000) {
+            ImagesResponse imagesResponse = service.generateImages(generateRequest);
+            System.out.println(imagesResponse.getData().get(0).getUrl());
+
+//            String responseJson = JSONObject.toJSONString(response);
+//            log.info("responseJson: {}", responseJson);
+
+//            // 解析 responseJson 为 JSONObject
+//            ResponseWrapper responseWrapper = JSON.parseObject(responseJson, ResponseWrapper.class);
+            ImagesResponse.Error error = imagesResponse.getError() ;
+
+            if (error == null) {
                 // 通知回调
                 log.info("图片已经生成 :-)");
 
                 // 获取图片链接
-                List<String> imageUrls = responseWrapper.getData().getImage_urls() ; // dataObj.getJSONArray("image_urls").toArray(new String[0]);
+                List<ImagesResponse.Image> imageUrls = imagesResponse.getData() ;
                 if (imageUrls != null) {
                     ImageResponse imageResponse = new ImageResponse();
                     for (int i = 0; i < imageUrls.size() ; i++) {
-                        String url = imageUrls.get(i);
+                        ImagesResponse.Image img = imageUrls.get(i) ;
                         // 下载图片到本地临时文件
                         File tempFile = new File("/tmp/image_" + i + ".png");
-                        byte[] imageBytes = downloadFileToBytes(url);
+                        byte[] imageBytes = downloadFileToBytes(img.getUrl());
                         if (imageBytes != null) {
                             imageResponse.addImage(imageBytes);
                         }
