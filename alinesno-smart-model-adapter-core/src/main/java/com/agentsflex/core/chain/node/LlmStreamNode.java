@@ -1,27 +1,32 @@
 package com.agentsflex.core.chain.node;
 
+import com.agentsflex.core.chain.AsyncNodeContext;
 import com.agentsflex.core.chain.Chain;
 import com.agentsflex.core.chain.DataType;
 import com.agentsflex.core.chain.Parameter;
+import com.agentsflex.core.llm.ChatContext;
 import com.agentsflex.core.llm.ChatOptions;
 import com.agentsflex.core.llm.Llm;
 import com.agentsflex.core.llm.StreamResponseListener;
-import com.agentsflex.core.message.SystemMessage;
+import com.agentsflex.core.llm.response.AiMessageResponse;
+import com.agentsflex.core.message.AiMessage;
+import com.agentsflex.core.message.MessageStatus;
 import com.agentsflex.core.prompt.TextPrompt;
 import com.agentsflex.core.prompt.template.TextPromptTemplate;
 import com.agentsflex.core.util.Maps;
 import com.agentsflex.core.util.StringUtil;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import lombok.Getter;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.*;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
+import java.util.concurrent.atomic.AtomicBoolean;
 
+@EqualsAndHashCode(callSuper = true)
 @Slf4j
-@Getter
+@Data
 public class LlmStreamNode extends BaseNode {
 
     protected Llm llm;
@@ -35,6 +40,7 @@ public class LlmStreamNode extends BaseNode {
     protected String outType = "text"; //text markdown json
 
     public LlmStreamNode() {
+        this.setAsync(true); // 强制设为异步节点
     }
 
 
@@ -75,30 +81,71 @@ public class LlmStreamNode extends BaseNode {
 
     @Override
     protected Map<String, Object> execute(Chain chain) {
-        Map<String, Object> parameterValues = chain.getParameterValues(this);
+//        Map<String, Object> parameterValues = chain.getParameterValues(this);
+//
+//        if (userPromptTemplate == null) {
+//            return Collections.emptyMap();
+//        }
+//
+//        TextPrompt userPrompt = userPromptTemplate.format(parameterValues);
+//
+//        if (systemPromptTemplate != null) {
+//            String systemPrompt = systemPromptTemplate.formatToString(parameterValues);
+//            userPrompt.setSystemMessage(SystemMessage.of(systemPrompt));
+//        }
+//
+//        // 创建一个 CompletableFuture 用于异步通知
+//        CompletableFuture<String> future = new CompletableFuture<>();
+//        llm.chatStream(userPrompt, listener, chatOptions);
+//        // 同步节点等待 future 完成
+//        try {
+//            String resultOutput = future.get();
+//            System.out.println("resultOutput= " + resultOutput);
+//            return Maps.of("output", resultOutput);
+//        } catch (InterruptedException | ExecutionException e) {
+//            throw new RuntimeException(e);
+//        }
 
-        if (userPromptTemplate == null) {
-            return Collections.emptyMap();
-        }
+        // 1. 准备prompt
+        Map<String, Object> params = chain.getParameterValues(this);
+        TextPrompt prompt = userPromptTemplate.format(params);
 
-        TextPrompt userPrompt = userPromptTemplate.format(parameterValues);
 
-        if (systemPromptTemplate != null) {
-            String systemPrompt = systemPromptTemplate.formatToString(parameterValues);
-            userPrompt.setSystemMessage(SystemMessage.of(systemPrompt));
-        }
+        // 2. 创建完成回调
+        AtomicBoolean isCompleted = new AtomicBoolean(false);
+        AsyncNodeContext context = new AsyncNodeContext(
+            chain,
+            this,
+            () -> isCompleted.set(true)
+        );
 
-        // 创建一个 CompletableFuture 用于异步通知
-        CompletableFuture<String> future = new CompletableFuture<>();
-        llm.chatStream(userPrompt, listener, chatOptions);
-        // 同步节点等待 future 完成
-        try {
-            String resultOutput = future.get();
-            System.out.println("resultOutput= " + resultOutput);
-            return Maps.of("output", resultOutput);
-        } catch (InterruptedException | ExecutionException e) {
-            throw new RuntimeException(e);
-        }
+        // 3. 发起流式请求
+        llm.chatStream(prompt, new StreamResponseListener() {
+            private final StringBuilder content = new StringBuilder();
+
+            @Override
+            public void onMessage(ChatContext ctx, AiMessageResponse response) {
+                AiMessage msg = response.getMessage();
+                content.append(msg.getContent());
+
+                // 实时流式输出
+                if (msg.getContent() != null) {
+                    chain.output(LlmStreamNode.this, msg.getContent());
+                }
+
+                if (msg.getStatus() == MessageStatus.END) {
+                    context.complete(Maps.of("output", content.toString()));
+                }
+            }
+
+            @Override
+            public void onFailure(ChatContext ctx, Throwable e) {
+                context.fail(e);
+            }
+        }, chatOptions);
+
+        // 4. 返回异步等待标记
+        return Chain.ASYNC_WAIT;
 
     }
 
