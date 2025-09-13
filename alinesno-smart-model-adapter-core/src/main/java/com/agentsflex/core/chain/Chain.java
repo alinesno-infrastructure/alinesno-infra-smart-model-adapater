@@ -23,19 +23,24 @@ import com.agentsflex.core.util.NamedThreadPools;
 import com.agentsflex.core.util.StringUtil;
 import com.alibaba.fastjson.JSONPath;
 import lombok.Getter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Phaser;
+import java.util.concurrent.*;
 import java.util.stream.Collectors;
 
 
+@Slf4j
 @Getter
 public class Chain extends ChainNode {
-    private static final Logger log = LoggerFactory.getLogger(Chain.class);
+
+    // 添加以下字段
+    private final ScheduledExecutorService timeoutExecutor = Executors.newSingleThreadScheduledExecutor();
+    private final Map<String, AsyncNodeContext> pendingAsyncNodes = new ConcurrentHashMap<>();
+
+    // 添加异步标记常量
+    public static final Map<String, Object> ASYNC_WAIT = Collections.singletonMap("__async__", true);
+
     protected Chain parent;
     protected List<Chain> children;
 
@@ -85,6 +90,32 @@ public class Chain extends ChainNode {
         this.message = holder.getMessage();
     }
 
+    // 添加关键方法
+    public void registerAsyncNode(ChainNode node, Runnable completionCallback) {
+        AsyncNodeContext context = new AsyncNodeContext(this, node, completionCallback);
+        pendingAsyncNodes.put(node.getId(), context);
+
+        // 设置超时（例如5分钟）
+        context.timeoutFuture = timeoutExecutor.schedule(
+            () -> context.fail(new TimeoutException("LLM响应超时")),
+            5, TimeUnit.MINUTES
+        );
+    }
+
+    public void continueFromNode(ChainNode node) {
+        AsyncNodeContext context = pendingAsyncNodes.remove(node.getId());
+        if (context != null && context.timeoutFuture != null) {
+            context.timeoutFuture.cancel(false);
+        }
+        phaser.register();
+        asyncNodeExecutors.execute(() -> {
+            try {
+                doExecuteNextNodes(node);
+            } finally {
+                phaser.arriveAndDeregister();
+            }
+        });
+    }
 
     public void setEventListeners(Map<Class<?>, List<ChainEventListener>> eventListeners) {
         this.eventListeners = eventListeners;
@@ -463,7 +494,6 @@ public class Chain extends ChainNode {
         }
     }
 
-
     protected void doExecuteNode(ExecuteNode executeNode) {
         if (this.getStatus() != ChainStatus.RUNNING) {
             return;
@@ -489,7 +519,44 @@ public class Chain extends ChainNode {
                 onNodeExecuteStart(nodeContext);
                 try {
                     suspendNodes.remove(currentNode.getId());
+
+                    // ============== 修改点1：执行节点并判断异步标记 ==============
                     executeResult = currentNode.execute(this);
+                    if (executeResult == Chain.ASYNC_WAIT) {
+                        // 注册异步回调
+                        registerAsyncNode(currentNode, () -> {
+                            // 异步完成后的处理
+                            currentNode.setNodeStatusFinished();
+                            onNodeExecuteEnd(nodeContext);
+                            ChainContext.clearNode();
+                            notifyEvent(new NodeEndEvent(this, currentNode, null));
+
+                            // 继续后续执行（需重新检查状态）
+                            if (this.getStatus() == ChainStatus.RUNNING &&
+                                !currentNode.isCallbackEnable()) {
+                                // 保持原有循环逻辑
+                                if (!currentNode.isLoopEnable()) {
+                                    doExecuteNextNodes(currentNode);
+                                    return;
+                                }
+                                if (currentNode.getMaxLoopCount() > 0 &&
+                                    nodeContext.getExecuteCount() >= currentNode.getMaxLoopCount()) {
+                                    doExecuteNextNodes(currentNode);
+                                    return;
+                                }
+                                NodeCondition breakCondition = currentNode.getLoopBreakCondition();
+                                if (breakCondition != null && breakCondition.check(this, nodeContext)) {
+                                    doExecuteNextNodes(currentNode);
+                                    return;
+                                }
+                                // 继续循环
+                                doExecuteNode(executeNode);
+                            }
+                        });
+                        return; // 异步等待直接返回
+                    }
+                    // ============== 修改点1结束 ==============
+
                 } finally {
                     nodeContext.recordExecute(executeNode);
                     this.executeResult = executeResult;
@@ -500,62 +567,161 @@ public class Chain extends ChainNode {
                 notifyNodeError(error, currentNode, executeResult);
                 throw error;
             } finally {
-                currentNode.setNodeStatusFinished();
-                onNodeExecuteEnd(nodeContext);
-                ChainContext.clearNode();
-                notifyEvent(new NodeEndEvent(this, currentNode, executeResult));
+                // ============== 修改点2：只有同步执行才走这里 ==============
+                if (executeResult != Chain.ASYNC_WAIT) {
+                    currentNode.setNodeStatusFinished();
+                    onNodeExecuteEnd(nodeContext);
+                    ChainContext.clearNode();
+                    notifyEvent(new NodeEndEvent(this, currentNode, executeResult));
+                }
+                // ============== 修改点2结束 ==============
             }
 
+            // ============== 修改点3：只有同步执行才处理结果 ==============
             if (executeResult != null && !executeResult.isEmpty()) {
                 executeResult.forEach((s, o) -> {
                     Chain.this.memory.put(currentNode.id + "." + s, o);
                 });
             }
+            // ============== 修改点3结束 ==============
+
+            if (this.getStatus() != ChainStatus.RUNNING) {
+                return;
+            }
+
+            if (currentNode.isCallbackEnable()) {
+                return;
+            }
+
+            // 继续执行下一个节点
+            if (!currentNode.isLoopEnable()) {
+                doExecuteNextNodes(currentNode);
+                return;
+            }
+
+            // 检查是否达到最大循环次数
+            if (currentNode.getMaxLoopCount() > 0 && nodeContext.getExecuteCount() >= currentNode.getMaxLoopCount()) {
+                doExecuteNextNodes(currentNode);
+                return;
+            }
+
+            // 检查跳出条件
+            NodeCondition breakCondition = currentNode.getLoopBreakCondition();
+            if (breakCondition != null && breakCondition.check(this, nodeContext)) {
+                doExecuteNextNodes(currentNode);
+                return;
+            }
+
+            // 等待间隔
+            long loopIntervalMs = currentNode.getLoopIntervalMs();
+            if (loopIntervalMs > 0) {
+                try {
+                    Thread.sleep(loopIntervalMs);
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                }
+            }
+
+            // 继续执行当前节点
+            doExecuteNode(executeNode);
         } finally {
             onNodeExecuteAfter(nodeContext);
         }
-
-        if (this.getStatus() != ChainStatus.RUNNING) {
-            return;
-        }
-
-        // 是否允许回调，允许则不执行下一步
-        if (currentNode.isCallbackEnable()) {
-            return ;
-        }
-
-        // 继续执行下一个节点
-        if (!currentNode.isLoopEnable()) {
-            doExecuteNextNodes(currentNode);
-            return;
-        }
-
-        // 检查是否达到最大循环次数
-        if (currentNode.getMaxLoopCount() > 0 && nodeContext.getExecuteCount() >= currentNode.getMaxLoopCount()) {
-            doExecuteNextNodes(currentNode);
-            return;
-        }
-
-        // 检查跳出条件
-        NodeCondition breakCondition = currentNode.getLoopBreakCondition();
-        if (breakCondition != null && breakCondition.check(this, nodeContext)) {
-            doExecuteNextNodes(currentNode);
-            return;
-        }
-
-        // 等待间隔
-        long loopIntervalMs = currentNode.getLoopIntervalMs();
-        if (loopIntervalMs > 0) {
-            try {
-                Thread.sleep(loopIntervalMs);
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt(); // 恢复中断状态
-            }
-        }
-
-        // 继续执行当前节点
-        doExecuteNode(executeNode);
     }
+
+
+//    protected void doExecuteNode(ExecuteNode executeNode) {
+//        if (this.getStatus() != ChainStatus.RUNNING) {
+//            return;
+//        }
+//        ChainNode currentNode = executeNode.currentNode;
+//        NodeContext nodeContext = getNodeContext(currentNode);
+//        try {
+//            onNodeExecuteBefore(nodeContext);
+//            nodeContext.recordTrigger(executeNode);
+//            NodeCondition nodeCondition = currentNode.getCondition();
+//            if (nodeCondition != null && !nodeCondition.check(this, nodeContext)) {
+//                return;
+//            }
+//
+//            Map<String, Object> executeResult = null;
+//            try {
+//                ChainContext.setNode(currentNode);
+//                notifyEvent(new NodeStartEvent(this, currentNode));
+//                if (this.getStatus() != ChainStatus.RUNNING) {
+//                    return;
+//                }
+//                currentNode.setNodeStatus(ChainNodeStatus.RUNNING);
+//                onNodeExecuteStart(nodeContext);
+//                try {
+//                    suspendNodes.remove(currentNode.getId());
+//                    executeResult = currentNode.execute(this);
+//                } finally {
+//                    nodeContext.recordExecute(executeNode);
+//                    this.executeResult = executeResult;
+//                }
+//            } catch (Throwable error) {
+//                log.error(error.toString(), error);
+//                currentNode.setNodeStatus(ChainNodeStatus.ERROR);
+//                notifyNodeError(error, currentNode, executeResult);
+//                throw error;
+//            } finally {
+//                currentNode.setNodeStatusFinished();
+//                onNodeExecuteEnd(nodeContext);
+//                ChainContext.clearNode();
+//                notifyEvent(new NodeEndEvent(this, currentNode, executeResult));
+//            }
+//
+//            if (executeResult != null && !executeResult.isEmpty()) {
+//                executeResult.forEach((s, o) -> {
+//                    Chain.this.memory.put(currentNode.id + "." + s, o);
+//                });
+//            }
+//        } finally {
+//            onNodeExecuteAfter(nodeContext);
+//        }
+//
+//        if (this.getStatus() != ChainStatus.RUNNING) {
+//            return;
+//        }
+//
+//        // 是否允许回调，允许则不执行下一步
+//        if (currentNode.isCallbackEnable()) {
+//            return ;
+//        }
+//
+//        // 继续执行下一个节点
+//        if (!currentNode.isLoopEnable()) {
+//            doExecuteNextNodes(currentNode);
+//            return;
+//        }
+//
+//        // 检查是否达到最大循环次数
+//        if (currentNode.getMaxLoopCount() > 0 && nodeContext.getExecuteCount() >= currentNode.getMaxLoopCount()) {
+//            doExecuteNextNodes(currentNode);
+//            return;
+//        }
+//
+//        // 检查跳出条件
+//        NodeCondition breakCondition = currentNode.getLoopBreakCondition();
+//        if (breakCondition != null && breakCondition.check(this, nodeContext)) {
+//            doExecuteNextNodes(currentNode);
+//            return;
+//        }
+//
+//        // 等待间隔
+//        long loopIntervalMs = currentNode.getLoopIntervalMs();
+//        if (loopIntervalMs > 0) {
+//            try {
+//                Thread.sleep(loopIntervalMs);
+//            } catch (InterruptedException e) {
+//                Thread.currentThread().interrupt(); // 恢复中断状态
+//            }
+//        }
+//
+//        // 继续执行当前节点
+//        doExecuteNode(executeNode);
+//    }
 
 
     /**
@@ -690,7 +856,7 @@ public class Chain extends ChainNode {
     }
 
 
-    private void notifyNodeError(Throwable error, ChainNode node, Map<String, Object> executeResult) {
+    protected void notifyNodeError(Throwable error, ChainNode node, Map<String, Object> executeResult) {
         for (NodeErrorListener errorListener : nodeErrorListeners) {
             errorListener.onError(error, node, executeResult, this);
         }
@@ -837,4 +1003,6 @@ public class Chain extends ChainNode {
             ", message='" + message + '\'' +
             '}';
     }
+
+
 }
