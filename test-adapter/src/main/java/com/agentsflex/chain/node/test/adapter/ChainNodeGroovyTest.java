@@ -5,9 +5,12 @@ import com.agentsflex.core.chain.impl.SequentialChain;
 import com.agentsflex.core.chain.node.EndNode;
 import com.agentsflex.core.chain.node.LlmStreamNode;
 import com.agentsflex.core.chain.node.StartNode;
+import com.agentsflex.core.llm.ChatContext;
 import com.agentsflex.core.llm.Llm;
-import com.agentsflex.llm.qwen.QwenLlm;
-import com.agentsflex.llm.qwen.QwenLlmConfig;
+import com.agentsflex.core.llm.StreamResponseListener;
+import com.agentsflex.core.llm.response.AiMessageResponse;
+import com.agentsflex.llm.siliconflow.SiliconflowLlm;
+import com.agentsflex.llm.siliconflow.SiliconflowLlmConfig;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -33,15 +36,38 @@ public class ChainNodeGroovyTest {
         LlmStreamNode llmStreamNode = new LlmStreamNode() ;
         llmStreamNode.setId("4");
         llmStreamNode.setUserPrompt("请给我一个5个字");
+        llmStreamNode.setListener(new StreamResponseListener() {
 
-        QwenLlmConfig config = new QwenLlmConfig();
+            @Override
+            public void onStart(ChatContext context) {
+                StreamResponseListener.super.onStart(context);
+            }
 
-        config.setEndpoint("https://dashscope.aliyuncs.com/compatible-mode/v1");
-        config.setApiKey(System.getenv("ALINESNO_QIWEN_API_KEY")) ;
+            @Override
+            public void onMessage(ChatContext context, AiMessageResponse response) {
+                System.out.println("推理=" + response.getMessage().getFullReasoningContent());
+                System.out.println("消息=" + response.getMessage().getFullContent());
+            }
+
+            @Override
+            public void onStop(ChatContext context) {
+                StreamResponseListener.super.onStop(context);
+            }
+
+            @Override
+            public void onFailure(ChatContext context, Throwable throwable) {
+                StreamResponseListener.super.onFailure(context, throwable);
+            }
+        });
+
+        SiliconflowLlmConfig config = new SiliconflowLlmConfig();
+
+        config.setApiKey(System.getenv("ALINESNO_SILICONFLOW_API_KEY")) ;
+        config.setModel("Qwen/QwQ-32B");
 
         config.setDebug(false);
 
-        Llm llm = new QwenLlm(config);
+        Llm llm = new SiliconflowLlm(config);
 
         llmStreamNode.setLlm(llm);
 
