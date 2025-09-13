@@ -45,6 +45,12 @@
             <version>3.0.0-M2-SNAPSHOT</version>
             <scope>compile</scope>
         </dependency>
+        <dependency>
+            <groupId>com.agentsflex</groupId>
+            <artifactId>alinesno-smart-model-adapter-llm-siliconflow</artifactId>
+            <version>3.0.0-M2-SNAPSHOT</version>
+            <scope>compile</scope>
+        </dependency>
     </dependencies>
 
 </project>
