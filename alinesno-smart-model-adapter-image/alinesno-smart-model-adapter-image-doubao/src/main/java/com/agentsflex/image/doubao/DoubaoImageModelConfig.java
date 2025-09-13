@@ -10,7 +10,7 @@ public class DoubaoImageModelConfig extends ImageConfig {
 
     public DoubaoImageModelConfig() {
         String endpoint = "https://visual.volcengineapi.com";
-        String model = DoubaoImageModelEnums.GENERAL_V2_1_L.getModelName();
+        String model = DoubaoImageModelEnums.GENERAL_SEEDREAM_3_0_T2I_250415.getModelName();
 
         setEndpoint(endpoint);
         setModel(model);
