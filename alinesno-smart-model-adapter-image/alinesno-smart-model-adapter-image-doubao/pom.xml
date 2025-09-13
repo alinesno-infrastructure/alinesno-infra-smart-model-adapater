@@ -29,8 +29,15 @@
         <dependency>
             <groupId>com.volcengine</groupId>
             <artifactId>volc-sdk-java</artifactId>
-            <version>1.0.196</version>
+            <version>1.0.235</version>
         </dependency>
+
+        <dependency>
+            <groupId>com.volcengine</groupId>
+            <artifactId>volcengine-java-sdk-ark-runtime</artifactId>
+            <version>0.2.29</version>
+        </dependency>
+
     </dependencies>
 
 </project>
