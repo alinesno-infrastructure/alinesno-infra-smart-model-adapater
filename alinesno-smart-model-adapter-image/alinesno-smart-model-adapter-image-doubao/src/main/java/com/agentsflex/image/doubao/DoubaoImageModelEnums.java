@@ -17,7 +17,8 @@ public enum DoubaoImageModelEnums {
     GENERAL_CONTROLNET_V2_0("general_controlnet_v2.0", "使用场景可根据具体情况确定，假设用于一般图像相关任务", false),
     GENERAL_V1_4("general_v1.4", "使用场景可根据具体情况确定，假设用于一般图像相关任务", false),
     GENERAL_V2_0_L("general_v2.0_L", "使用场景可根据具体情况确定，假设用于一般图像相关任务", false),
-    GENERAL_V2_1_L("general_v2.1_L", "使用场景可根据具体情况确定，假设用于一般图像相关任务", false);
+    GENERAL_V2_1_L("general_v2.1_L", "使用场景可根据具体情况确定，假设用于一般图像相关任务", false),
+    GENERAL_SEEDREAM_3_0_T2I_250415("doubao-seedream-3-0-t2i-250415", "使用场景可根据具体情况确定，假设用于一般图像相关任务", false);
 
     private final String modelName;
     private final String usageScenario;
